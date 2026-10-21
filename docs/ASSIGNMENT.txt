@@ -1,0 +1,130 @@
+AD371 H11 28563
+Assignments
+Assignment: Architectural Analysis, AI-Assisted Protot…
+Fall 2026
+Home
+Announcements
+Assignments
+Discussions
+Grades
+People
+Pages
+Syllabus
+Modules
+Panopto Video
+Assignment: Architectural Analysis, AI-Assisted Prototyping, and Quality Assurance
+Due: Sun Oct 18, 2026 11:59pm
+Missing
+100 Points Possible
+Attempt 1
+In Progress
+NEXT UP: Submit Assignment
+
+Unlimited Attempts Allowed
+Available: Oct 5, 2026 12:00am until Dec 20, 2026 11:59pm
+Objective & Overview
+In software engineering, architects do not simply analyze system design on a whiteboard; they validate their ideas by spinning up proofs-of-concept (PoCs), probing open-source repositories, and running automated or systematic QA suites to confirm that functional and non-functional requirements are met.
+
+In this assignment, you will:
+
+Analyze a real-world application (open-source codebase or published case study) to identify its architectural style and key components.
+Use an AI tool (ChatGPT, Claude, Gemini, GitHub Copilot) to generate an initial architectural breakdown and scaffold a working companion prototype or interactive architectural visualizer/dashboard.
+Verify, customize, and test the application using a rigorous QA checklist.
+Deploy and submit your source code, live URL, GitHub repository with full AI prompts, and a video walkthrough demonstrating functionality and testing.
+Assignment Deliverables
+Submit the following four items in the LMS submission text box:
+
+Live Website / Deployment URL: (e.g., Vercel, Netlify, Render, GitHub Pages, Fly.io, or AWS/Cloud Run—if applicable to your project type).
+GitHub Repository URL: Public repository containing your code and a complete README.md.
+README.md Documentation:
+Project Description: Overview of the application analyzed and the prototype built.
+Setup & Run Instructions: Clear steps to clone, configure environment variables, and run locally.
+AI Disclosure & Prompt Appendix: The exact AI tools used, sample prompts submitted, initial output generated, and a summary of what you verified, corrected, or customized.
+Video Demonstration Link: A 5-to-7 minute video (YouTube unlisted/public, Loom, or Panopto) containing:
+Architectural Overview: Slides/diagrams explaining the target application’s architectural style, components, and your AI verification audit.
+Functionality Walkthrough: A screen recording of the live prototype in action.
+QA & Test Case Verification: A live walkthrough of the Web Project Testing & Quality Assurance Guide checklist.
+Step-by-Step Instructions
+Step 1: Select & Analyze an Existing System
+Pick a prominent open-source system (e.g., Mastodon, Ghost, Supabase, Discourse, Mattermost) or a published case study architecture (e.g., Netflix playback engine, Uber dispatch, Spotify audio pipeline).
+
+Identify its primary architectural style (e.g., modular monolith, event-driven microservices, serverless, layered/tier-based).
+Map its core components (compute engines, databases, queues/brokers, caches, reverse proxies).
+Step 2: Leverage AI for Initial Draft & Scaffolding
+Use an LLM to generate an initial breakdown of the system and scaffold a lightweight companion application (e.g., an architectural dashboard, an API client interfacing with the open-source tool, or a functional PoC recreating one subsystem like authentication or queue processing).
+Fact-check the AI: Verify the AI's architectural breakdown against official documentation or source code. Document any hallucinations, outdated library versions, or inaccurate assumptions.
+Customize: Refactor and tailor the generated code to your specific design, styling, and functionality needs.
+Step 3: Web Project Testing & Quality Assurance (QA) Checklist
+Before recording your submission, run your application through this QA framework and verify each category:
+
+[ ] 1. Functional Testing:
+Core user flows operate without errors (e.g., forms submit, data displays, navigation routes work).
+Edge cases (empty inputs, long strings, unexpected clicks) are handled gracefully.
+[ ] 2. UI & Responsive Design:
+Layout renders cleanly on desktop (1920x1080) and mobile/tablet viewport sizes (using browser DevTools).
+No visual clipping, overlapping text, or broken layout grids.
+[ ] 3. Cross-Browser & Console Health:
+The application runs cleanly in at least two engines (Chromium-based and Firefox/Safari).
+The browser developer console is clean (zero uncaught JavaScript errors, zero broken asset 404s).
+[ ] 4. Accessibility & Performance:
+Form fields have accessible labels and sensible tab-order navigation.
+Pages load promptly without blocking operations.
+Video Demonstration Requirements (5 to 7 Minutes)
+Your video recording must include both your screen and webcam/face throughout the presentation:
+
+0:00 – 2:00 | Architecture & AI Teardown:
+Present your architectural slides/diagrams. Explain the application's style, key components, and how you audited the AI's output (what it got right vs. what you had to correct).
+2:00 – 4:00 | Live Functionality Walkthrough:
+Show the working application in the browser or terminal. Demonstrate end-to-end execution and key features.
+4:00 – 6:00 | QA & Testing Guide Walkthrough:
+Open browser Developer Tools on screen. Walk through the Web Project Testing & QA Guide checklist live, demonstrating form validation, mobile responsiveness, and a clean console with no unhandled runtime errors.
+6:00 – 7:00 | Conclusion & Retrospective:
+Briefly state the primary engineering lesson learned regarding architectural trade-offs and AI-assisted engineering.
+Grading Rubric (Total: 100 Points)
+Criteria
+
+Exceptional (Full Points)
+
+Proficient
+
+Needs Revision
+
+Architectural Analysis & Style Identification (20 pts)
+
+Accurately identifies architectural styles, data persistence layers, and communication boundaries with deep technical precision.
+
+Identifies styles and components, but some descriptions remain high-level or generic.
+
+Misidentifies architectural styles or presents an inaccurate model.
+
+AI Collaboration & README Quality (20 pts)
+
+README.md thoroughly documents setup steps, full prompts, AI tools used, and provides a clear critique of AI hallucinations/customizations.
+
+README.md includes basic setup and prompts, but offers minimal reflection or analysis on what the AI generated.
+
+Missing setup instructions, missing prompts, or lacks disclosure of AI tools.
+
+Working Application & Functionality (20 pts)
+
+Working live site or clean local build that executes without errors. Customizations are apparent and functional.
+
+Application runs, but has minor functional glitches or minimal customization beyond the raw AI output.
+
+Application fails to build, produces fatal runtime errors, or is incomplete.
+
+QA Checklist & Testing Execution (20 pts)
+
+Video clearly walks through the QA checklist live; tests responsive views, checks DevTools console for zero errors, and verifies edge cases.
+
+Shows some testing in the video, but skips several checklist categories (e.g., responsive design or console logs).
+
+Skips QA testing demonstration entirely or ignores visible application bugs.
+
+Video Presentation & Professionalism (20 pts)
+
+Professional screen + camera recording; crisp audio; active camera eye contact; clear transitions strictly within the 5–7 minute time window.
+
+Good presentation, but relies heavily on a script, has slightly unbalanced audio, or is 30–60s off the time target.
+
+No webcam/face visible, unintelligible audio, reads script verbatim, or significant timing violations (>2 mins off).
