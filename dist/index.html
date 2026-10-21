@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Explore Ghost's architecture, trace its request paths, and test a browser-local publishing prototype.">
+  <meta name="theme-color" content="#254b3f">
+  <title>Ghost Architecture Lab · AD371</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="brand" href="#architecture" aria-label="Ghost Architecture Lab home"><span class="brand-mark" aria-hidden="true">≡</span><span>ghost<span class="brand-sub">ARCHITECTURE LAB</span></span></a>
+      <div class="course-label">AD371 / FIELD STUDY 01</div>
+      <nav aria-label="Main navigation">
+        <a href="#architecture" data-route="architecture"><span aria-hidden="true">01</span> Architecture</a>
+        <a href="#publishing" data-route="publishing"><span aria-hidden="true">02</span> Publishing lab</a>
+        <a href="#audit" data-route="audit"><span aria-hidden="true">03</span> AI & evidence</a>
+        <a href="#qa" data-route="qa"><span aria-hidden="true">04</span> QA notebook</a>
+      </nav>
+      <div class="sidebar-note"><span class="small-dot"></span> Learn it. Trace it. Test it.<p>An architectural study of the open-source publishing platform.</p></div>
+      <div class="sidebar-bottom">Independent educational project<br><a href="https://github.com/TryGhost/Ghost" target="_blank" rel="noopener noreferrer">Explore Ghost source ↗</a></div>
+    </aside>
+    <div class="workspace">
+      <header class="topbar"><span>SOFTWARE ARCHITECTURE <span class="crumb">/</span> GHOST</span><span class="snapshot">SOURCE SNAPSHOT · 21 OCT 2026</span></header>
+      <main id="main" tabindex="-1">
+        <section id="architecture" class="page" aria-labelledby="architecture-title">
+          <div class="page-heading"><div><p class="eyebrow">01 / UNDER THE HOOD</p><h1 id="architecture-title">Inside a publishing system.</h1><p class="lede">One core. Clear boundaries. Follow a request through Ghost<br class="desktop-break"> and see how the pieces work together.</p></div><span class="study-stamp">G<span>OPEN SOURCE<br>CASE STUDY</span></span></div>
+          <div class="summary-strip"><div><span class="summary-label">ARCHITECTURAL STYLE</span><strong>Modular monolith <span class="subtle">+ decoupled clients</span></strong></div><div><span class="summary-label">CORE RUNTIME</span><strong>Node.js / Express</strong></div><div><span class="summary-label">PRODUCTION DATA</span><strong>MySQL</strong></div></div>
+          <div class="architecture-grid">
+            <div class="panel diagram-panel">
+              <div class="panel-heading"><div><h2>System map</h2><p>Select a component to inspect its boundary.</p></div><span class="label-pill">SIMPLIFIED MODEL</span></div>
+              <div class="diagram" aria-label="Ghost architecture. Browser communicates through Nginx with a single Ghost Core process. Core contains themes, APIs and services, and connects to MySQL.">
+                <div class="diagram-row clients"><button class="node" data-node="browser"><span class="node-icon" aria-hidden="true">▤</span><span><b>Reader / editor</b><small>Browser client</small></span></button><span class="optional-chip">Custom frontend → Content API</span></div>
+                <div class="connector"><span>HTTPS</span><i aria-hidden="true">↓</i></div>
+                <button class="node proxy" data-node="nginx"><span class="node-icon" aria-hidden="true">⇄</span><span><b>Nginx</b><small>Reverse proxy · recommended stack</small></span></button>
+                <div class="connector"><span>HTTP to Ghost</span><i aria-hidden="true">↓</i></div>
+                <div class="process-boundary"><div class="boundary-title"><span class="small-dot"></span> GHOST CORE <span>ONE NODE.JS PROCESS</span></div>
+                  <div class="core-nodes"><button class="node" data-node="themes"><span class="node-icon" aria-hidden="true">◫</span><span><b>Theme layer</b><small>Handlebars → HTML</small></span></button><button class="node" data-node="apis"><span class="node-icon" aria-hidden="true">{ }</span><span><b>JSON APIs</b><small>Content + Admin</small></span></button></div>
+                  <div class="internal-line">↓ <span>in-process calls</span> ↓</div>
+                  <button class="node services" data-node="services"><span class="node-icon" aria-hidden="true">⌘</span><span><b>Core services & models</b><small>Business logic · permissions · persistence</small></span></button>
+                </div>
+                <div class="connector database-link"><span>Database connection</span><i aria-hidden="true">↓</i></div>
+                <div class="diagram-row storage"><button class="node" data-node="mysql"><span class="node-icon" aria-hidden="true">▱</span><span><b>MySQL</b><small>Durable publication data</small></span></button><button class="node optional" data-node="integrations"><span class="node-icon" aria-hidden="true">↗</span><span><b>External services</b><small>Mail · storage adapters</small></span></button></div>
+                <p class="diagram-caption">External services connect to Core separately; the database arrow ends at MySQL. Optional Ghost 6 analytics and ActivityPub services are outside this focused map.</p>
+              </div>
+              <div class="legend"><span><i class="legend-box"></i> Process boundary</span><span><i class="legend-outline"></i> Optional integration</span><span>All diagram nodes are keyboard accessible</span></div>
+            </div>
+            <aside class="panel inspector" aria-labelledby="component-title"><p class="eyebrow">COMPONENT INSPECTOR</p><span id="component-category" class="label-pill green">APPLICATION</span><h2 id="component-title">Core services & models</h2><p id="component-description"></p><dl id="component-facts"></dl><a id="component-source" class="text-link" target="_blank" rel="noopener noreferrer">Read the source ↗</a><div class="insight"><span>THE ARCHITECTURE LESSON</span><p>Separate responsibilities do not automatically mean separate deployments.</p></div></aside>
+          </div>
+          <div class="panel trace-panel"><div class="trace-head"><div><p class="eyebrow">FOLLOW THE REQUEST</p><h2 id="flow-title">Read a story</h2></div><div class="segmented" aria-label="Request path"><button id="read-flow" aria-pressed="true">Read a story</button><button id="publish-flow" aria-pressed="false">Publish a post</button></div></div><ol id="trace-steps" class="trace-steps"></ol><p id="flow-note" class="muted"></p></div>
+          <p class="scope-note">“Modular monolith” is this study’s interpretation of the documented runtime boundary. Ghost describes its product as a decoupled, service-based application. <a href="https://github.com/TryGhost/Ghost/blob/main/docs/codebase/runtime-architecture.md" target="_blank" rel="noopener noreferrer">Runtime evidence ↗</a></p>
+        </section>
+        <section id="publishing" class="page" aria-labelledby="publishing-title" hidden>
+          <div class="page-heading"><div><p class="eyebrow">02 / LEARN BY DOING</p><h1 id="publishing-title">From draft to published.</h1><p class="lede">Exercise validation, state transitions, and a failed write.<br>Watch the editorial boundary become visible.</p></div><span class="label-pill green">INTERACTIVE PROTOTYPE</span></div>
+          <div class="notice"><b>Browser-local simulation.</b> No real Ghost server, login, API call, email, or MySQL connection. Stories stay in this browser when storage is available.</div>
+          <div id="storage-warning" class="notice warning" role="status" hidden></div>
+          <div class="lab-toolbar"><label class="switch-label"><input id="database-down" type="checkbox"><span class="toggle-track" aria-hidden="true"></span>Simulate database outage</label><span id="database-status" class="status-badge">Database simulation online</span><button id="reset-demo" class="button ghost">Reset demo</button></div>
+          <div class="lab-grid"><div class="panel compose"><div class="panel-heading"><div><h2>Compose a story</h2><p>A draft is private until you publish it.</p></div><span class="number-mark">01</span></div><form id="story-form" novalidate><div class="field"><label for="story-title">Story title</label><input id="story-title" name="title" maxlength="100" placeholder="A small idea, ready to share" aria-describedby="title-help title-error"><div class="field-meta"><span id="title-help">Required · 100 characters maximum</span><span id="title-count">0 / 100</span></div><p id="title-error" class="field-error"></p></div><div class="field"><label for="story-body">Story text</label><textarea id="story-body" name="body" rows="6" maxlength="1000" placeholder="Write at least 20 characters to explore the publishing flow…" aria-describedby="body-help body-error"></textarea><div class="field-meta"><span id="body-help">20–1,000 characters</span><span id="body-count">0 / 1000</span></div><p id="body-error" class="field-error"></p></div><button class="button primary" type="submit">Save draft <span aria-hidden="true">→</span></button></form><div id="lab-message" class="lab-message" role="status" aria-live="polite"></div><div class="mini-trace"><span>UI validation</span><i>→</i><span>Domain logic</span><i>→</i><span>Local state</span></div></div><div class="panel stories"><div class="panel-heading"><div><h2>Editorial workspace</h2><p><span id="draft-count">0</span> drafts · <span id="published-count">0</span> published</p></div><span class="number-mark">02</span></div><div id="story-list"></div></div></div>
+          <div class="reader-section"><div class="section-heading"><div><p class="eyebrow">THE READ BOUNDARY</p><h2>Public reading view</h2></div><span class="label-pill">PUBLISHED STORIES ONLY</span></div><div id="reader-list" class="reader-grid"></div></div>
+          <div class="panel activity"><h2>Request log <span class="subtle">/ this session</span></h2><p class="muted">Teaching events from the simulation; these are not network traces from Ghost.</p><ol id="activity-log"></ol></div>
+        </section>
+        <section id="audit" class="page" aria-labelledby="audit-title" hidden>
+          <div class="page-heading"><div><p class="eyebrow">03 / EVIDENCE OVER ASSUMPTIONS</p><h1 id="audit-title">Treat AI as a first draft.</h1><p class="lede">The model proposes a structure. Official documentation<br class="desktop-break"> and source code establish the boundaries.</p></div></div>
+          <div class="notice"><b>Audit scope:</b> a dated documentation/source snapshot, checked 21 October 2026. Links to upstream <code>main</code> can change. No Ghost installation or production load test was performed.</div>
+          <div class="audit-table-wrap panel"><table class="audit-table"><caption>Four architectural assumptions checked against evidence</caption><thead><tr><th scope="col">Assumption to check</th><th scope="col">Verified finding</th><th scope="col">Evidence</th></tr></thead><tbody>
+            <tr><td><span class="audit-num">01</span>Each box is a microservice.</td><td>Core’s API, frontend, and backend modules share one Node.js process. Admin executes in the browser. Logical modules and network services are different boundaries.</td><td><a href="https://github.com/TryGhost/Ghost/blob/main/docs/codebase/runtime-architecture.md" target="_blank" rel="noopener noreferrer">Runtime architecture ↗</a></td></tr>
+            <tr><td><span class="audit-num">02</span>Redis is mandatory.</td><td>Internal caches default to memory; Redis adapters are optional. MySQL is the durable database. HTTP caching is configured separately.</td><td><a href="https://docs.ghost.org/config/" target="_blank" rel="noopener noreferrer">Cache configuration ↗</a></td></tr>
+            <tr><td><span class="audit-num">03</span>Any SQL database is supported in production.</td><td>The production stack supports MySQL. SQLite is useful for local development; PostgreSQL is not a supported substitute.</td><td><a href="https://docs.ghost.org/hosting/" target="_blank" rel="noopener noreferrer">Supported stack ↗</a></td></tr>
+            <tr><td><span class="audit-num">04</span>SMTP also delivers native newsletters.</td><td>Transactional mail and bulk newsletters use different delivery paths. Native self-hosted bulk delivery uses Mailgun’s API.</td><td><a href="https://docs.ghost.org/newsletters/" target="_blank" rel="noopener noreferrer">Newsletter delivery ↗</a></td></tr>
+          </tbody></table></div>
+          <p class="scope-note">These are assumptions we tested, not invented examples of errors made during this chat. The prompt appendix records actual prompts and the initial scaffold.</p>
+          <div class="tradeoff-grid"><article class="panel tradeoff"><span class="eyebrow">TRADE-OFF / 01</span><h2>Simple deployment,<br>shared failure boundary.</h2><p>A single core process keeps calls local and deployment straightforward. Its modules also share runtime resources and availability. Splitting services adds operational and network costs.</p></article><article class="panel tradeoff"><span class="eyebrow">TRADE-OFF / 02</span><h2>Flexible frontends,<br>more client decisions.</h2><p>The Content API lets a custom frontend consume public content. That flexibility introduces decisions about rendering, caching, deployment, and keeping content fresh.</p></article></div>
+          <div class="panel disclosure"><h2>What AI contributed</h2><p>OpenAI Codex generated this explorer, the publishing prototype, tests, and documentation. A research subagent checked official sources. Customizations include an explicit process boundary, separate read/write paths, failure injection, defensive storage, accessible controls, and a QA evidence export.</p><p>The application does not put Admin API credentials in a browser. Its local storage is a teaching convenience and is not production access control.</p><a href="https://docs.ghost.org/admin-api/" class="text-link" target="_blank" rel="noopener noreferrer">Review Admin API authentication ↗</a></div>
+        </section>
+        <section id="qa" class="page" aria-labelledby="qa-title" hidden>
+          <div class="page-heading"><div><p class="eyebrow">04 / MAKE QUALITY OBSERVABLE</p><h1 id="qa-title">Test it. Keep the evidence.</h1><p class="lede">A repeatable walkthrough for the assignment’s four QA categories.<br>Mark a check only after you have demonstrated it.</p></div><button id="export-qa" class="button primary">Export QA notes ↓</button></div>
+          <div class="qa-progress"><span><b id="qa-count">0</b> of <b id="qa-total">0</b> checks recorded</span><progress id="qa-progress" value="0" max="10" aria-label="Checks recorded"></progress><button id="reset-qa" class="button ghost">Clear checks</button></div>
+          <div class="notice"><b>Your manual record.</b> Checking a box records your assertion; it does not execute a test. Automated results and observed browser checks are documented separately in <code>docs/QA_REPORT.md</code>.</div>
+          <div id="qa-groups" class="qa-groups"></div>
+          <div class="panel notes-panel"><h2><label for="qa-notes">Evidence & observations</label></h2><p class="muted" id="qa-notes-help">Record browser versions, viewport sizes, failures, and retests. Notes stay in this browser.</p><textarea id="qa-notes" rows="5" maxlength="5000" aria-describedby="qa-notes-help" placeholder="Example: Firefox [version], 390 × 844 — no horizontal overflow. Blank title focuses the title field…"></textarea></div>
+        </section>
+        <footer><span>GHOST ARCHITECTURE LAB</span><span>AD371 · Architectural analysis & quality assurance</span><a href="#audit">Sources & disclosure ↗</a></footer>
+      </main>
+    </div>
+  </div>
+  <noscript>This interactive explorer needs JavaScript. Architecture text remains available in the source and README.</noscript>
+</body>
+</html>
