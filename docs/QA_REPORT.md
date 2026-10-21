@@ -13,7 +13,7 @@ Date: October 21, 2026. Tester: OpenAI Codex automated checks and screenshot ins
 | Console and local assets | **Clean in Chrome fixture run** | Zero page errors, console errors, failed requests, and error-status asset responses in recorded test session. This was not an internet-hosted test. |
 | Keyboard basics | **Passed exercised controls** | Skip link, route activation, invalid-field focus, outage checkbox, and reset button. Semantic labels and focus styles are implemented. |
 | Firefox | **Environment blocked; not passed** | Firefox 153.0 test binary exited with Windows error 3221225477 before navigation, including a retry with software graphics. No app test ran in Firefox. |
-| Live hosting | **See deployment record; final browser checks pending** | Localhost network requests were denied/timed out in this execution environment. Hosting success alone is not a browser smoke test. |
+| Live hosting | **Live-browser smoke check passed** | Real [GitHub Pages URL](https://ching202.github.io/ghost-architecture-lab/) loaded in the Codex in-app browser. Component selection, publish trace, validation, draft, outage rejection/retry, publication, reload, unpublication, reset, and all four routes exercised. Captured warning/error console entries: zero. Full Network-panel audit and second-engine check remain pending. |
 | Performance | **Limited observation only** | Static payload is approximately 59 KiB uncompressed with no runtime dependencies or external font/image requests. Navigation timings in JSON are for a local route fixture and are not real-network benchmarks. |
 | Full accessibility audit | **Not completed** | No automated WCAG score, full screen-reader audit, 200% zoom audit, or formal contrast certification is claimed. |
 
@@ -60,10 +60,16 @@ The test process exits nonzero when Firefox fails to launch, even though Chrome'
 
 Screenshots containing test story text are test fixtures, not preloaded user content. The application starts with an empty notebook and no stories on a fresh origin.
 
+## GitHub Pages smoke check
+
+On October 21, 2026, the first [Pages workflow](https://github.com/ching202/ghost-architecture-lab/actions/runs/39689303104) completed its test and deployment job successfully. The real HTTPS URL was then opened in the Codex in-app browser, separate from the earlier local-fixture tests. The live check confirmed the behaviors recorded in the hosting row above. The test story was removed with Reset demo, leaving the application ready for a fresh demonstration. See the [live screenshot](evidence/live-deployment.jpg) and [deployment record](DEPLOYMENT.md).
+
+No formal network benchmark, full cross-browser rerun, or signed-out access test was performed during this smoke check. The in-app browser version was not independently recorded.
+
 ## Required follow-up before submission
 
 1. Repeat core flows in a working Firefox or Safari environment; record actual version and result.
-2. Confirm final deployment access and inspect its Console/Network for errors.
+2. Confirm signed-out/instructor access and inspect Network in DevTools; repeat the console check while recording.
 3. Record actual network/device performance observations, keyboard use, and responsive layout in the screen/webcam video.
 4. Review remaining accessibility checks. Update this report with observations rather than substituting app checkbox states for evidence.
 
