@@ -28,7 +28,7 @@ jobs:
         env:
           BASE_URL: https://ching202.github.io/ghost-architecture-lab/
           BROWSER_ENGINES: chromium,firefox
-          EVIDENCE_DIR: docs/evidence/live-browser-run
+          EVIDENCE_DIR: test-results/live-browser-run
           FIXTURE_MODE: '0'
         run: node tests/browser-check.mjs
       - name: Save actual results and screenshots
@@ -36,6 +36,6 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: browser-qa-evidence
-          path: docs/evidence/live-browser-run
+          path: test-results/live-browser-run
           retention-days: 30
           if-no-files-found: warn
