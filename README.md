@@ -138,6 +138,3 @@ In the GitHub repository's **Settings → Pages**, choose **GitHub Actions**. Ru
 
 The first Pages workflow completed successfully on October 21, 2026. A live-browser smoke check verified component selection, request traces, validation, draft creation, failed-write recovery, publication, reload persistence, unpublication, and reset. No warning/error console entries were captured during that check. See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for the verified URL and remaining QA limits.
 
-## Submission and video
-
-Use [VIDEO_SCRIPT_SHORT.txt](docs/VIDEO_SCRIPT_SHORT.txt) for about 400 spoken words with exact clicks and a 6:25 target, allowing a slower pace and pauses. [VIDEO_OUTLINE.md](docs/VIDEO_OUTLINE.md) retains the fuller outline. Keep your screen and webcam visible throughout. [SUBMISSION.md](docs/SUBMISSION.md) contains the LMS text template and remaining tasks. The video recording and student review must be completed by the student/account owner. Consult the deployment record for verified links and the QA report for actual results and limits.
