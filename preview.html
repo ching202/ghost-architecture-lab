@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Explore Ghost's architecture, trace its request paths, and test a browser-local publishing prototype.">
+  <meta name="theme-color" content="#254b3f">
+  <title>Ghost Architecture Lab · AD371</title>
+  <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTgiIGZpbGw9IiMyNTRiM2YiLz48cGF0aCBkPSJNMTggMTloMjh2NkgxOHptMCAxMWgxOHY2SDE4em0wIDExaDI4djZIMTh6IiBmaWxsPSIjZjRmMWU4Ii8+PC9zdmc+Cg==" type="image/svg+xml">
+  <style>:root{--bg:#f5f4ee;--paper:#fffefa;--ink:#24372f;--muted:#626d66;--line:#dedfd4;--green:#254b3f;--lime:#e7edb3;--soft:#edf1e7;--violet:#ece8f5;--danger:#9b3334;--sidebar:245px;font-family:Inter,Arial,Helvetica,sans-serif;color:var(--ink);background:var(--bg);font-synthesis:none}
+*{box-sizing:border-box}body{margin:0}button,input,textarea{font:inherit}button,a,input,textarea{touch-action:manipulation}button,a{-webkit-tap-highlight-color:transparent}button{cursor:pointer}a{color:inherit;text-underline-offset:4px}button{color:inherit}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #7154ab;outline-offset:4px}button:disabled{opacity:.6;cursor:default}h1,h2,h3,p{margin-top:0}p{line-height:1.65}h1{font-size:clamp(32px,3vw,48px);font-weight:550;letter-spacing:-1.8px;line-height:1.12;margin-bottom:16px}h2{font-size:20px;letter-spacing:-.5px;font-weight:600;margin-bottom:8px}h3{font-size:17px}button{border:0}b,strong{font-weight:600}.muted,.subtle{color:var(--muted)}.subtle{font-weight:400}.eyebrow{font-size:10px;letter-spacing:1.6px;font-weight:700;color:var(--muted);margin-bottom:17px}.skip-link{position:fixed;top:-70px;left:20px;background:var(--paper);padding:15px;z-index:30}.skip-link:focus{top:15px}.sidebar{position:fixed;inset:0 auto 0 0;width:var(--sidebar);background:#eaece2;border-right:1px solid #d9ddcf;padding:36px 24px;display:flex;flex-direction:column;z-index:5}.brand{display:flex;gap:12px;align-items:center;text-decoration:none;font-size:34px;font-weight:700;letter-spacing:-1.5px}.brand-mark{width:43px;height:43px;background:var(--green);color:var(--paper);border-radius:13px;display:grid;place-items:center;font-size:37px;font-weight:400;line-height:1}.brand-sub{font-size:8px;letter-spacing:1.45px;display:block;line-height:1.6}.course-label{font-size:9px;letter-spacing:1.7px;color:#59665b;margin-top:54px;margin-bottom:18px}.sidebar nav{display:grid;gap:6px}.sidebar nav a{text-decoration:none;padding:13px 12px;border-radius:8px;font-size:13px;display:flex;gap:15px;align-items:center}.sidebar nav a span{font:10px ui-monospace,Consolas,monospace;opacity:.7}.sidebar nav a:hover{background:#dfe3d7}.sidebar nav a[aria-current="page"]{color:#fffefa;background:var(--green)}.sidebar-note{margin-top:56px;padding:0 10px;font-size:12px;line-height:1.6}.sidebar-note p{font-size:11px;color:var(--muted);margin-top:12px}.small-dot{display:inline-block;height:6px;width:6px;background:#759462;border-radius:50%;margin-right:7px}.sidebar-bottom{margin-top:auto;font-size:10px;color:var(--muted);line-height:2}.sidebar-bottom a{font-size:11px}.workspace{margin-left:var(--sidebar)}.topbar{height:74px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 48px;font-size:9px;font-weight:600;letter-spacing:1.3px}.crumb{color:#9aa394;margin:0 12px}.snapshot{color:var(--muted)}main{max-width:1500px;margin:auto;padding:40px 48px 0;outline:none}.page-heading{display:flex;align-items:center;justify-content:space-between;gap:30px;margin-bottom:30px}.lede{font-size:14px;line-height:1.8;color:var(--muted);margin-bottom:0}.study-stamp{border:1px solid #bfcbb8;border-radius:50%;width:105px;height:105px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:36px;transform:rotate(10deg);flex-shrink:0}.study-stamp span{font:8px/1.5 Arial,sans-serif;text-align:center;letter-spacing:1px}.summary-strip{display:grid;grid-template-columns:1.7fr 1fr 1fr;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:20px 0;margin-bottom:28px;gap:20px}.summary-strip>div+div{border-left:1px solid var(--line);padding-left:25px}.summary-label{display:block;font-size:8px;letter-spacing:1.2px;color:var(--muted);margin-bottom:7px}.summary-strip strong{font-size:12px}.summary-strip .subtle{font-size:10px}.panel{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden}.architecture-grid{display:grid;grid-template-columns:minmax(0,1fr) 285px;gap:20px}.panel-heading{padding:23px 24px;display:flex;align-items:center;justify-content:space-between;gap:10px}.panel-heading p{font-size:11px;color:var(--muted);margin:0}.panel-heading h2{font-size:17px}.label-pill{display:inline-block;background:#f0eee7;color:#5d655d;border:1px solid #e2e0d5;border-radius:20px;font-size:8px;letter-spacing:.65px;line-height:1.5;padding:6px 10px;white-space:nowrap}.label-pill.green{background:var(--soft);border-color:#d7e1cc;color:#375439}.diagram{background-image:radial-gradient(#cdd4c9 .7px,transparent .7px);background-size:16px 16px;padding:20px 35px 12px;border-top:1px solid #eeeee7}.diagram-row{display:flex;align-items:center;justify-content:center;gap:14px}.node{background:var(--paper);border:1px solid #d4dacf;border-radius:9px;min-height:56px;padding:11px 16px;display:flex;align-items:center;text-align:left;gap:12px;box-shadow:0 3px 5px #23382b05;transition:background .15s,border .15s;max-width:100%}.node b{font-size:12px;display:block}.node small{display:block;font-size:9px;color:var(--muted);margin-top:4px;line-height:1.5}.node-icon{font-family:Consolas,monospace;font-size:20px;color:#59715f;min-width:22px}.node:hover{background:#f1f4eb;border-color:#9cb08e}.node[aria-pressed="true"]{background:#e9efdc;border-color:#809864;box-shadow:0 0 0 1px #809864}.node.on-path{border-color:#9c89bb;background:#f1edf8}.optional-chip{font-size:8px;color:var(--muted);max-width:125px;line-height:1.7;padding:8px;border:1px dashed #c5ccbf;border-radius:6px}.connector{height:31px;display:flex;align-items:center;justify-content:center;position:relative}.connector i{font-size:23px;font-style:normal;color:#93a289;line-height:1}.connector span{position:absolute;left:calc(50% + 16px);font:8px ui-monospace,Consolas,monospace;color:var(--muted);white-space:nowrap}.proxy{margin:auto;min-width:240px}.process-boundary{padding:14px;border:1px solid #c7cfbd;border-radius:11px;background:#eef1e7d9}.boundary-title{font-size:9px;letter-spacing:1.1px;display:flex;align-items:center;margin-bottom:14px}.boundary-title span:last-child{margin-left:auto;font-size:7px;color:#68765f;letter-spacing:.8px}.core-nodes{display:grid;grid-template-columns:1fr 1fr;gap:14px}.core-nodes .node{padding:12px;gap:9px}.internal-line{text-align:center;color:#829276;font-size:18px;display:flex;justify-content:space-around;align-items:center;height:29px}.internal-line span{font:8px ui-monospace,Consolas,monospace;color:var(--muted)}.services{width:100%;justify-content:center}.storage .node{flex:1;min-width:0}.optional{border-style:dashed}.diagram-caption{font-size:9px;color:var(--muted);margin:12px 0 0;line-height:1.6}.legend{padding:13px 20px;display:flex;flex-wrap:wrap;gap:13px;font-size:8px;color:var(--muted);border-top:1px solid #eeeee7}.legend span{display:flex;align-items:center;gap:5px}.legend-box,.legend-outline{display:inline-block;width:10px;height:8px;border:1px solid #a8b599;border-radius:2px;background:#eef1e7}.legend-outline{border-style:dashed;background:none}.inspector{padding:25px;background:#edf0e6;display:flex;align-items:flex-start;flex-direction:column}.inspector h2{font:28px/1.16 Georgia,serif;letter-spacing:-.5px;margin:20px 0 15px}.inspector>p:not(.eyebrow){font-size:12px;line-height:1.8}.inspector dl{margin:6px 0 22px;font-size:11px;width:100%}.inspector dt{text-transform:uppercase;font-size:8px;letter-spacing:1px;color:var(--muted);margin-top:17px}.inspector dd{margin:5px 0 0;line-height:1.6}.text-link{font-size:11px;font-weight:600}.insight{border-top:1px solid #d4dbca;padding-top:20px;margin-top:auto;width:100%}.insight span{font-size:8px;letter-spacing:1px}.insight p{font:italic 17px/1.5 Georgia,serif;margin:12px 0 0}.trace-panel{padding:24px;margin-top:20px}.trace-head,.section-heading{display:flex;justify-content:space-between;align-items:center;gap:16px}.trace-head .eyebrow{margin-bottom:8px;font-size:8px}.trace-head h2{font-size:19px;margin-bottom:0}.segmented{display:flex;padding:3px;background:#f0f0e8;border-radius:7px}.segmented button{font-size:10px;border-radius:5px;padding:9px 12px;background:none;min-height:34px}.segmented button[aria-pressed=true]{background:var(--green);color:white}.trace-steps{list-style:none;padding:0;margin:22px 0 14px;display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.trace-steps li{position:relative;display:flex;align-items:center;gap:8px;font-size:10px;line-height:1.5}.trace-steps li:not(:last-child)::after{content:'→';position:absolute;right:0;color:#7d8c70}.trace-steps li span{background:var(--violet);border-radius:50%;height:23px;min-width:23px;display:grid;place-items:center;font:9px ui-monospace,Consolas,monospace}.trace-panel>.muted{font-size:11px;margin-bottom:0}.scope-note{font-size:10px;color:var(--muted);margin:18px 0;line-height:1.8}footer{display:flex;gap:20px;justify-content:space-between;padding:25px 0;margin-top:37px;border-top:1px solid var(--line);font-size:8px;color:var(--muted);line-height:1.5}footer span:first-child{letter-spacing:1px}.notice{font-size:12px;padding:15px 19px;background:#eaeedf;border:1px solid #d7dfca;border-radius:8px;line-height:1.7;margin-bottom:23px}.notice.warning{background:#fff1d8;border-color:#e4d5aa}.button{display:inline-flex;gap:14px;align-items:center;justify-content:center;font-size:12px;font-weight:600;padding:12px 17px;border-radius:7px;min-height:42px}.button.primary{background:var(--green);color:white}.button.primary:hover{background:#17392d}.button.ghost{border:1px solid #d3d8cc;background:transparent}.button.ghost:hover{background:#e6ebdd}.button.small{font-size:11px;padding:8px 13px;min-height:35px}.lab-toolbar{display:flex;gap:18px;align-items:center;margin-bottom:22px;flex-wrap:wrap}.lab-toolbar>.button{margin-left:auto}.switch-label{display:flex;align-items:center;font-size:12px;gap:9px;position:relative;cursor:pointer}.switch-label input{position:absolute;opacity:0;left:0;width:35px;height:22px;margin:0}.toggle-track{width:35px;height:22px;background:#bdc9b4;border-radius:20px;padding:3px}.toggle-track:before{content:'';display:block;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .15s}.switch-label input:checked+.toggle-track{background:#a34c3e}.switch-label input:checked+.toggle-track:before{transform:translateX(13px)}.switch-label input:focus-visible+.toggle-track{outline:3px solid #7154ab;outline-offset:4px}.status-badge{font-size:10px;color:#49613d}.status-badge.offline{color:var(--danger)}.lab-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.compose form{padding:0 24px}.field{margin-bottom:20px}.field>label{display:block;font-size:12px;font-weight:600;margin-bottom:9px}input[type=text],input:not([type]),textarea{width:100%;border:1px solid #cdd4c5;background:#fffefa;padding:12px 13px;border-radius:6px;font-size:13px;line-height:1.6;color:var(--ink)}textarea{resize:vertical;min-height:110px}input[aria-invalid=true],textarea[aria-invalid=true]{border-color:var(--danger)}::placeholder{color:#7a8177}.field-meta{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);gap:6px;margin-top:7px}.field-error{font-size:11px;color:var(--danger);margin:7px 0 0;min-height:0}.field-error:empty{display:none}.lab-message{margin:16px 24px 0;font-size:12px;line-height:1.6;min-height:19px}.lab-message.error{color:var(--danger)}.mini-trace{display:flex;gap:10px;justify-content:center;margin-top:22px;padding:17px;background:#eff2e7;font-size:9px;line-height:1.5}.mini-trace i{font-style:normal;color:#64775a}.number-mark{font:16px Georgia,serif;color:#8f9b85}.stories{max-height:650px;overflow-y:auto}#story-list{padding:0 24px 23px}.empty-state{display:flex;min-height:175px;align-items:center;justify-content:center;flex-direction:column;border:1px dashed #c9d2bd;border-radius:8px;padding:25px;text-align:center;background:#f5f6ef}.empty-state>span{font:32px Georgia,serif;color:#8b9b80}.empty-state p{font-size:12px;color:var(--muted);margin:10px 0 0;max-width:290px}.story-card{border:1px solid var(--line);border-radius:8px;padding:17px;margin-bottom:12px;overflow-wrap:anywhere}.story-card h3{font-size:15px;margin-bottom:8px;line-height:1.5}.story-card p{font-size:11px;color:var(--muted);margin-bottom:12px;white-space:pre-wrap;overflow-wrap:anywhere}.story-card .slug{font:9px ui-monospace,Consolas,monospace;color:var(--muted);margin-bottom:12px}.story-card .story-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}.story-meta time{font-size:9px;color:var(--muted)}.story-state{display:inline-block;font-size:8px;letter-spacing:1px;border-radius:4px;padding:5px 7px;background:#ede9f6}.story-state.published{background:#e2edcd}.story-actions{display:flex;justify-content:flex-end}.reader-section{margin-top:35px}.section-heading{margin-bottom:20px}.section-heading .eyebrow{margin-bottom:8px}.reader-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.reader-grid>.empty-state{grid-column:1/-1;min-height:125px}.reader-card{padding:23px;background:#f0eee4;border:1px solid #dcdccd;border-radius:9px;overflow-wrap:anywhere}.reader-card h3{font:22px/1.35 Georgia,serif}.reader-card p{font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere}.reader-card .eyebrow{font:8px Arial,sans-serif}.activity{padding:24px;margin-top:24px}.activity h2{font-size:15px}.activity .muted{font-size:11px}.activity ol{padding:0;list-style:none;margin:18px 0 0}.activity li{font:10px/1.7 ui-monospace,Consolas,monospace;border-top:1px solid #ebeee3;padding:9px 0;display:flex;gap:16px;overflow-wrap:anywhere}.activity time{color:#6c775e;white-space:nowrap}.audit-table-wrap{margin-top:24px}.audit-table{width:100%;border-collapse:collapse;text-align:left;font-size:12px}.audit-table caption{text-align:left;padding:24px;font-size:17px;font-weight:600}.audit-table th{background:#edf0e5;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:14px 22px;font-weight:600}.audit-table td{padding:22px;line-height:1.8;border-top:1px solid var(--line);vertical-align:top}.audit-table td:first-child{width:28%;font-weight:600}.audit-table td:last-child{width:20%;font-size:10px}.audit-num{display:block;color:#87977b;font:12px Georgia,serif;margin-bottom:10px}.tradeoff-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:30px 0}.tradeoff{padding:28px}.tradeoff h2{font:27px/1.25 Georgia,serif;margin:15px 0}.tradeoff p{font-size:12px;color:var(--muted);margin-bottom:0}.disclosure{padding:26px}.disclosure p{font-size:12px}.qa-progress{display:flex;align-items:center;gap:25px;margin-bottom:20px;font-size:13px}.qa-progress progress{flex:1;max-width:400px;height:7px;accent-color:var(--green)}.qa-progress .button{margin-left:auto}.qa-groups{display:grid;grid-template-columns:1fr 1fr;gap:20px}.qa-group{padding:24px}.qa-group h2{font-size:17px;margin-bottom:20px}.qa-check{display:grid;grid-template-columns:19px 1fr;gap:12px;align-items:start;border-top:1px solid #e5e8dd;padding:17px 0;font-size:12px;cursor:pointer}.qa-check input{width:17px;height:17px;accent-color:var(--green);margin:1px 0}.qa-check small{display:block;color:var(--muted);font-size:10px;line-height:1.7;margin-top:6px}.qa-check:has(input:checked){color:#34532c}.notes-panel{padding:25px;margin-top:22px}.notes-panel .muted{font-size:11px}code{font:11px ui-monospace,Consolas,monospace}noscript{position:fixed;bottom:0;background:#fff0cf;padding:15px;z-index:30;width:100%}[hidden]{display:none!important}
+@media(min-width:1600px){:root{--sidebar:260px}main{padding:47px 65px 0}.topbar{padding:0 65px}.architecture-grid{grid-template-columns:minmax(0,1fr) 330px}.diagram{padding:24px 60px 12px}.node{min-height:62px}.connector{height:35px}.node b{font-size:13px}.node small{font-size:10px}.inspector{padding:30px}.panel-heading{padding:26px 29px}.trace-panel{padding:26px 29px}.diagram-caption{font-size:10px}.legend{font-size:9px}}
+@media(max-width:1150px){:root{--sidebar:205px}.sidebar{padding:28px 17px}main{padding:30px 27px 0}.topbar{padding:0 27px}.architecture-grid{grid-template-columns:minmax(0,1fr) 245px}.diagram{padding:16px 18px 12px}.node{padding:10px;gap:8px}.node-icon{font-size:17px;min-width:18px}.summary-strip .subtle{display:block;margin-top:4px}.optional-chip{max-width:100px}.core-nodes{gap:9px}.core-nodes .node{padding:10px 8px;gap:6px}.node b{font-size:11px}.node small{font-size:8px}.inspector{padding:21px}.inspector h2{font-size:25px}.trace-steps{gap:8px}.trace-steps li{font-size:9px;gap:5px}.trace-steps li:not(:last-child)::after{right:-3px}.snapshot{font-size:8px}.reader-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){:root{--sidebar:180px}.sidebar{padding:25px 12px}.brand{font-size:28px;gap:9px}.brand-mark{width:36px;height:39px}.brand-sub{font-size:6px}.sidebar nav a{font-size:11px;gap:9px;padding:13px 10px}.course-label{font-size:8px}.architecture-grid{grid-template-columns:1fr}.inspector{display:grid;grid-template-columns:1fr 1fr;column-gap:25px}.inspector .eyebrow{grid-column:1/-1}.inspector .label-pill{justify-self:start}.inspector h2{grid-column:1;margin-top:15px}.inspector>p:not(.eyebrow){grid-column:1}.inspector dl{grid-column:2;grid-row:2/5}.inspector .insight{grid-column:2;grid-row:5/7;margin-top:0}.inspector .text-link{grid-column:1}.snapshot{display:none}.study-stamp{height:80px;width:80px;font-size:30px}.study-stamp span{font-size:6px}.page-heading{gap:20px}.lab-grid{grid-template-columns:1fr}.qa-groups{grid-template-columns:1fr}.summary-strip{grid-template-columns:1.3fr 1fr 1fr;gap:10px}.summary-strip>div+div{padding-left:14px}.summary-strip strong{font-size:11px}.summary-label{font-size:7px}.tradeoff-grid{gap:12px}.tradeoff{padding:20px}.tradeoff h2{font-size:23px}.audit-table td{padding:15px;font-size:11px}.audit-table th{padding:13px}.audit-table td:last-child{font-size:10px}.trace-steps{gap:10px}.trace-steps li{flex-direction:column;align-items:flex-start}.trace-steps li:not(:last-child)::after{top:4px;right:8px}.desktop-break{display:none}.reader-grid{grid-template-columns:1fr}}
+@media(max-width:640px){.sidebar{position:static;width:auto;padding:18px 20px;border-right:0;border-bottom:1px solid var(--line)}.brand{font-size:26px}.brand-mark{width:34px;height:34px;font-size:30px}.brand-sub{font-size:6px}.course-label,.sidebar-note,.sidebar-bottom{display:none}.sidebar nav{display:flex;gap:4px;margin-top:19px;justify-content:space-between}.sidebar nav a{padding:9px 7px;gap:5px;font-size:10px;border-radius:5px;white-space:nowrap}.sidebar nav a span{display:none}.workspace{margin-left:0}.topbar{height:44px;padding:0 20px;font-size:8px}main{padding:27px 20px 0}.page-heading{align-items:flex-start;margin-bottom:25px}.page-heading>.label-pill,.study-stamp{display:none}h1{font-size:32px;letter-spacing:-1.3px}.eyebrow{font-size:8px}.lede{font-size:12px;line-height:1.8}.summary-strip{grid-template-columns:1fr 1fr;padding:17px 0;gap:20px}.summary-strip>div:first-child{grid-column:1/-1}.summary-strip>div+div{padding-left:0;border-left:0}.summary-strip .subtle{display:inline}.summary-strip strong{font-size:11px}.summary-label{font-size:7px}.panel-heading{padding:19px 17px}.panel-heading .label-pill{font-size:6px;padding:5px 7px}.panel-heading h2{font-size:16px}.panel-heading p{font-size:10px}.diagram{padding:17px 12px 10px}.node b{font-size:11px}.node small{font-size:8px}.optional-chip{font-size:7px;max-width:90px}.node-icon{font-size:17px}.clients{gap:9px}.proxy{min-width:225px}.process-boundary{padding:10px}.boundary-title{font-size:8px}.boundary-title span:last-child{font-size:6px;letter-spacing:.3px}.core-nodes{gap:7px}.core-nodes .node{padding:9px 7px;gap:5px}.core-nodes .node-icon{display:none}.storage{gap:8px}.storage .node{padding:9px 7px;gap:5px}.storage .node-icon{display:none}.legend{padding:12px;gap:11px;font-size:7px}.diagram-caption{font-size:8px}.inspector{padding:22px;display:block}.inspector h2{font-size:27px}.inspector .eyebrow{margin-bottom:15px}.inspector dl{display:grid;grid-template-columns:85px 1fr;gap:10px;align-items:baseline}.inspector dt,.inspector dd{margin:0}.insight{margin-top:25px}.trace-panel{padding:20px 17px}.trace-head{align-items:flex-start;flex-direction:column;gap:17px}.segmented{width:100%}.segmented button{flex:1}.trace-steps{grid-template-columns:1fr;gap:14px;margin-top:20px}.trace-steps li{flex-direction:row;align-items:center;font-size:11px;gap:12px}.trace-steps li:not(:last-child)::after{content:none}.trace-panel>.muted{font-size:10px}.scope-note{font-size:9px}footer{flex-wrap:wrap;gap:12px;font-size:7px;margin-top:27px;padding:22px 0}footer span:nth-child(2){width:100%;order:2}.notice{padding:13px;font-size:11px;line-height:1.8}.lab-toolbar{gap:15px}.switch-label{font-size:11px}.lab-toolbar .status-badge{order:3;width:100%;font-size:10px}.lab-toolbar>.button{padding:9px 10px;min-height:37px;font-size:10px}.compose form{padding:0 17px}.lab-message{margin-left:17px;margin-right:17px}#story-list{padding:0 17px 17px}.field-meta{font-size:8px}.section-heading{flex-wrap:wrap}.section-heading h2{font-size:20px}.activity{padding:18px}.activity li{font-size:9px;gap:9px}.audit-table,.audit-table tbody,.audit-table tr,.audit-table td{display:block}.audit-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.audit-table caption{display:block;font-size:16px;padding:20px}.audit-table td{padding:0 20px 15px;border:0;font-size:12px}.audit-table td:first-child{width:auto;border-top:1px solid var(--line);padding-top:20px}.audit-table td:last-child{width:auto;padding-bottom:20px;font-size:11px}.audit-num{display:inline;margin-right:12px}.tradeoff-grid{grid-template-columns:1fr}.tradeoff{padding:24px}.disclosure{padding:22px}.qa-progress{gap:12px;flex-wrap:wrap;font-size:12px}.qa-progress progress{order:3;max-width:none;flex-basis:100%}.qa-progress .button{font-size:10px;min-height:36px;padding:8px 11px}#qa .page-heading{flex-direction:column}#qa .page-heading>.button{font-size:11px}.qa-group{padding:22px}.notes-panel{padding:22px}}
+.toggle-track{pointer-events:none}
+.database-link i{position:absolute;left:calc(25% - 7px)}.database-link span{left:calc(25% + 10px)}
+@media(max-width:360px){.sidebar nav{display:grid;grid-template-columns:1fr 1fr;gap:5px}.sidebar nav a{justify-content:center}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}
+</style>
+  <script type="module">// Pure domain functions shared by the browser and Node's test runner.
+const LIMITS = Object.freeze({title:100, body:1000, posts:40});
+function validatePost(title, body) {
+  const errors = {};
+  if (typeof title !== 'string' || !title.trim()) errors.title = 'Add a title before saving.';
+  else if (title.trim().length > LIMITS.title) errors.title = `Keep the title to ${LIMITS.title} characters.`;
+  if (typeof body !== 'string' || body.trim().length < 20) errors.body = 'Write at least 20 characters for the story.';
+  else if (body.trim().length > LIMITS.body) errors.body = `Keep the story to ${LIMITS.body} characters.`;
+  return errors;
+}
+function uniqueSlug(title, posts) {
+  const base = title.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,70) || 'untitled-story';
+  let slug = base, n = 2;
+  while (posts.some(post => post.slug === slug)) slug = `${base}-${n++}`;
+  return slug;
+}
+function createPost(posts, {title, body}, {databaseDown = false, id = Date.now().toString(), now = new Date().toISOString()} = {}) {
+  const errors = validatePost(title, body);
+  if (Object.keys(errors).length) return {ok:false, errors};
+  if (databaseDown) return {ok:false, message:'The simulated database is unavailable. Nothing was saved. Restore it and retry.'};
+  if (posts.length >= LIMITS.posts) return {ok:false, message:`The demo holds ${LIMITS.posts} stories. Reset the demo to start again.`};
+  return {ok:true, posts:[{id, title:title.trim(), body:body.trim(), slug:uniqueSlug(title,posts), status:'draft', createdAt:now}, ...posts]};
+}
+function transitionPost(posts, id, status, databaseDown = false) {
+  if (databaseDown) return {ok:false, message:'The simulated database is unavailable. The story was not changed.'};
+  if (!['draft','published'].includes(status)) return {ok:false, message:'Unknown publication state.'};
+  if (!posts.some(post => post.id === id)) return {ok:false, message:'This story no longer exists. Refresh the selection.'};
+  return {ok:true, posts:posts.map(post => post.id === id ? {...post,status} : post)};
+}
+function decodePosts(raw) {
+  if (raw === null) return {posts:[], warning:null};
+  try {
+    const data = JSON.parse(raw);
+    if (data.version !== 1 || !Array.isArray(data.posts) || data.posts.length > LIMITS.posts) throw new Error('Invalid storage format');
+    const ids = new Set(), slugs = new Set();
+    for (const p of data.posts) {
+      if (!p || typeof p.id !== 'string' || !p.id || p.id.length > 100 || ids.has(p.id) ||
+        typeof p.slug !== 'string' || !/^[a-z0-9-]{1,85}$/.test(p.slug) || slugs.has(p.slug) ||
+        !['draft','published'].includes(p.status) || Object.keys(validatePost(p.title,p.body)).length ||
+        typeof p.createdAt !== 'string' || !Number.isFinite(Date.parse(p.createdAt))) throw new Error('Invalid saved story');
+      ids.add(p.id); slugs.add(p.slug);
+    }
+    return {posts:data.posts.map(({id,title,body,slug,status,createdAt}) => ({id,title,body,slug,status,createdAt})), warning:null};
+  } catch { return {posts:[], warning:'Saved demo data could not be read. A fresh session is ready.'}; }
+}
+function encodePosts(posts) { return JSON.stringify({version:1,posts}); }
+
+const $ = selector => document.querySelector(selector);
+const $$ = selector => [...document.querySelectorAll(selector)];
+const POST_KEY = 'ghost-lab.posts.v1';
+const QA_KEY = 'ghost-lab.qa.v1';
+const runtimeSource = 'https://github.com/TryGhost/Ghost/blob/main/docs/codebase/runtime-architecture.md';
+const components = {
+  browser: {title:'Reader / editor',category:'CLIENT',description:'The browser displays a public story or runs Ghost Admin. These two experiences have different permissions and request paths.',facts:{Boundary:'Outside the Ghost server process',Communication:'HTTP(S); Admin uses the Admin API',Tradeoff:'Client flexibility adds interface and authentication responsibilities.'},source:runtimeSource},
+  nginx: {title:'Nginx',category:'INFRASTRUCTURE',description:'In the recommended self-hosted stack, Nginx accepts public requests and proxies them to the Ghost application. It is a separate infrastructure process.',facts:{Boundary:'Reverse proxy outside Ghost Core',Communication:'HTTP to Ghost’s listening port',Tradeoff:'Central request handling adds another operational component.'},source:'https://docs.ghost.org/faq/'},
+  themes: {title:'Theme layer',category:'IN-PROCESS MODULE',description:'Handlebars templates turn content into server-rendered HTML. Native theme helpers reach shared server capabilities through an in-process proxy, not a separate HTTP hop to the Content API.',facts:{Boundary:'Inside Ghost Core',Communication:'Internal calls; HTML returned to reader',Tradeoff:'Integrated rendering is convenient; custom headless clients use a different path.'},source:runtimeSource},
+  apis: {title:'Content & Admin APIs',category:'HTTP INTERFACES',description:'The Content API reads published content. The authenticated Admin API manages content. Both are interfaces provided by Core, not independent microservices.',facts:{Boundary:'HTTP boundary into one Core process',Communication:'JSON over HTTP; different auth models',Tradeoff:'Separate permissions clarify read/write access. Admin integration secrets belong on a trusted server.'},source:'https://docs.ghost.org/admin-api/'},
+  services: {title:'Core services & models',category:'IN-PROCESS MODULE',description:'Ghost’s business logic, permissions, and models run within its shared Node.js process. Models coordinate persistent data access; service modules separate responsibilities within that runtime.',facts:{Boundary:'One application runtime',Communication:'In-process calls + database connection',Tradeoff:'Simple local calls and deployment; shared resources and failure boundary.'},source:runtimeSource},
+  mysql: {title:'MySQL',category:'PERSISTENCE',description:'A separate MySQL service stores durable publication data in the supported production stack. SQLite is a local development option, not an interchangeable supported production database.',facts:{Boundary:'Database outside the Node.js process',Communication:'Core models issue database operations',Tradeoff:'Durable relational data; availability and backups need operational care.'},source:'https://docs.ghost.org/hosting/'},
+  integrations: {title:'External services',category:'OPTIONAL INTEGRATIONS',description:'Ghost can integrate with email providers and storage adapters. Transactional mail and native bulk newsletters follow different paths; native self-hosted bulk mail uses Mailgun’s API.',facts:{Boundary:'Provider or adapter dependent',Communication:'Mail transport, provider APIs, or storage adapter',Tradeoff:'External capabilities introduce provider dependencies and partial failure cases.'},source:'https://docs.ghost.org/newsletters/'}
+};
+const flows = {
+  read:{title:'Read a story',steps:['Reader','Nginx','Theme layer','Core models','MySQL'],nodes:['browser','nginx','themes','services','mysql'],note:'For a standard theme request, Core renders HTML and returns it to the reader via Nginx. This simplified path omits caches and middleware; native themes use in-process calls.'},
+  publish:{title:'Publish a post',steps:['Ghost Admin','Nginx','Admin API','Core services','MySQL'],nodes:['browser','nginx','apis','services','mysql'],note:'The editor sends an authenticated write. Core checks permissions and updates persistent state; the response returns to Admin. The Content API does not create posts.'}
+};
+function inspect(key) {
+  const c = components[key];
+  $('#component-title').textContent = c.title;
+  $('#component-category').textContent = c.category;
+  $('#component-description').textContent = c.description;
+  $('#component-facts').replaceChildren();
+  for (const [label,value] of Object.entries(c.facts)) {
+    const dt = document.createElement('dt'), dd = document.createElement('dd');
+    dt.textContent = label; dd.textContent = value; $('#component-facts').append(dt,dd);
+  }
+  $('#component-source').href = c.source;
+  $$('[data-node]').forEach(node => node.setAttribute('aria-pressed',String(node.dataset.node === key)));
+}
+function showFlow(name) {
+  const f = flows[name];
+  $('#flow-title').textContent = f.title; $('#flow-note').textContent = f.note;
+  $('#trace-steps').replaceChildren(...f.steps.map((step,i) => {
+    const li = document.createElement('li'), n = document.createElement('span');
+    n.textContent = String(i+1).padStart(2,'0'); li.append(n,document.createTextNode(step)); return li;
+  }));
+  $('#read-flow').setAttribute('aria-pressed',String(name==='read'));
+  $('#publish-flow').setAttribute('aria-pressed',String(name==='publish'));
+  $$('[data-node]').forEach(node => node.classList.toggle('on-path',f.nodes.includes(node.dataset.node)));
+}
+$$('[data-node]').forEach(node => node.addEventListener('click',() => inspect(node.dataset.node)));
+$('#read-flow').addEventListener('click',() => showFlow('read'));
+$('#publish-flow').addEventListener('click',() => showFlow('publish'));
+inspect('services'); showFlow('read');
+
+function route(focus=false) {
+  const candidate = location.hash.slice(1);
+  const name = ['architecture','publishing','audit','qa'].includes(candidate) ? candidate : 'architecture';
+  $$('.page').forEach(page => {page.hidden = page.id !== name;});
+  $$('[data-route]').forEach(a => a.dataset.route===name ? a.setAttribute('aria-current','page') : a.removeAttribute('aria-current'));
+  if (focus) { window.scrollTo({top:0}); $('#main').focus({preventScroll:true}); }
+}
+window.addEventListener('hashchange',() => route(true)); route();
+$('.skip-link').addEventListener('click',event=>{event.preventDefault();$('#main').focus();});
+
+let storageAvailable = true;
+function warnStorage(text) { $('#storage-warning').textContent=text; $('#storage-warning').hidden=false; }
+function storageRead(key) {
+  try { return localStorage.getItem(key); }
+  catch { storageAvailable=false; warnStorage('Browser storage is blocked. The lab still works, but this session will not survive a reload.'); return null; }
+}
+function storageWrite(key,value) {
+  try { localStorage.setItem(key,value); storageAvailable=true; return true; }
+  catch { storageAvailable=false; warnStorage('Browser storage is unavailable or full. Changes are in memory only and will be lost on reload.'); return false; }
+}
+const decoded = decodePosts(storageRead(POST_KEY));
+let posts = decoded.posts;
+if (decoded.warning) warnStorage(decoded.warning);
+const activity = [];
+let databaseDown = false;
+function log(message) {
+  activity.unshift({time:new Date(),message}); if (activity.length>12) activity.pop();
+  $('#activity-log').replaceChildren(...activity.map(item => {
+    const li = document.createElement('li'), time=document.createElement('time'), text=document.createElement('span');
+    time.dateTime=item.time.toISOString(); time.textContent=item.time.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    text.textContent=item.message; li.append(time,text); return li;
+  }));
+}
+function message(text,isError=false) {const el=$('#lab-message');el.textContent=text;el.classList.toggle('error',isError);}
+function persistPosts() { storageWrite(POST_KEY,encodePosts(posts)); }
+function element(tag,className,text) { const el=document.createElement(tag);if(className) el.className=className;if(text!==undefined) el.textContent=text;return el; }
+function empty(text) {const div=element('div','empty-state');div.append(element('span','', '↗'),element('p','',text));return div;}
+function renderStories() {
+  const published=posts.filter(p=>p.status==='published');
+  $('#draft-count').textContent=String(posts.length-published.length); $('#published-count').textContent=String(published.length);
+  const cards=posts.map(post => {
+    const card=element('article','story-card'), meta=element('div','story-meta'), time=element('time','',new Date(post.createdAt).toLocaleDateString());
+    time.dateTime=post.createdAt;meta.append(element('span',`story-state ${post.status}`,post.status.toUpperCase()),time);
+    card.append(meta,element('h3','',post.title),element('div','slug',`/${post.slug}/`),element('p','',post.body.length>140 ? post.body.slice(0,140)+'…' : post.body));
+    const actions=element('div','story-actions'), button=element('button','button small '+(post.status==='draft'?'primary':'ghost'),post.status==='draft'?'Publish story →':'Return to draft');
+    button.setAttribute('aria-label',`${post.status==='draft'?'Publish':'Unpublish'}: ${post.title}`);
+    button.addEventListener('click',() => {
+      const nextStatus=post.status==='draft'?'published':'draft';
+      const result=transitionPost(posts,post.id,nextStatus,databaseDown);
+      if (!result.ok) { message(result.message,true); log('WRITE FAILED · database simulation unavailable; state unchanged.'); return; }
+      posts=result.posts;persistPosts();renderStories();
+      message(`“${post.title}” is ${nextStatus==='published'?'now visible in the public reading view':'a draft again and hidden from the public reading view'}.${storageAvailable?'':' Changes are in memory only.'}`);
+      log(nextStatus==='published'?'WRITE OK · draft → published; read view includes the story.':'WRITE OK · published → draft; read view excludes the story.');
+      // The old button is replaced during rendering. Move focus to its replacement.
+      const index=posts.findIndex(p=>p.id===post.id); $('#story-list').querySelectorAll('button')[index]?.focus({preventScroll:true});
+    });
+    actions.append(button);card.append(actions);return card;
+  });
+  $('#story-list').replaceChildren(...(cards.length?cards:[empty('Your first draft starts here. Save a story, then publish it to cross the read boundary.')]));
+  $('#reader-list').replaceChildren(...(published.length ? published.map(p=>{
+    const article=element('article','reader-card');article.append(element('p','eyebrow','PUBLISHED STORY'),element('h3','',p.title),element('p','',p.body));return article;
+  }) : [empty('Nothing public yet. Drafts are visible to the editorial workspace only.')]));
+}
+function setErrors(errors) {
+  for (const field of ['title','body']) {
+    $(`#${field}-error`).textContent=errors[field]||'';
+    $(`#story-${field}`).setAttribute('aria-invalid',String(Boolean(errors[field])));
+  }
+}
+function counts() {$('#title-count').textContent=`${$('#story-title').value.length} / 100`;$('#body-count').textContent=`${$('#story-body').value.length} / 1000`;}
+['title','body'].forEach(field => $(`#story-${field}`).addEventListener('input',()=>{
+  counts();if ($(`#story-${field}`).getAttribute('aria-invalid')==='true') {
+    const errors=validatePost($('#story-title').value,$('#story-body').value);
+    $(`#${field}-error`).textContent=errors[field]||'';
+    $(`#story-${field}`).setAttribute('aria-invalid',String(Boolean(errors[field])));
+  }
+}));
+$('#story-form').addEventListener('submit',event=>{
+  event.preventDefault();
+  const result=createPost(posts,{title:$('#story-title').value,body:$('#story-body').value},{databaseDown,id:crypto.randomUUID()});
+  setErrors(result.errors||{});
+  if (!result.ok) {
+    message(result.message||'Check the highlighted fields. Your text is still here.',true);
+    log(result.errors?'VALIDATION · invalid draft rejected before persistence.':'WRITE FAILED · no draft saved; input retained.');
+    if (result.errors) $(`#story-${Object.keys(result.errors)[0]}`).focus();
+    return;
+  }
+  posts=result.posts;persistPosts();renderStories();$('#story-form').reset();counts();
+  message(storageAvailable?'Draft saved. It stays private until you publish it.':'Draft saved in memory only. Storage is unavailable.');
+  log('WRITE OK · valid story saved as draft; excluded from public reading view.');$('#story-title').focus();
+});
+$('#database-down').addEventListener('change',event=>{
+  databaseDown=event.target.checked;
+  $('#database-status').textContent=databaseDown?'Database simulation offline':'Database simulation online';
+  $('#database-status').classList.toggle('offline',databaseDown);
+  log(databaseDown?'FAULT INJECTED · writes will fail; existing reads remain visible in this demo.':'FAULT CLEARED · writes can succeed again.');
+});
+$('#reset-demo').addEventListener('click',()=>{
+  posts=[];persistPosts();renderStories();$('#story-form').reset();setErrors({});counts();
+  databaseDown=false;$('#database-down').checked=false;$('#database-status').textContent='Database simulation online';$('#database-status').classList.remove('offline');
+  activity.length=0;log('RESET · local stories cleared; database simulation online.');message('Demo reset. Start a new story.');$('#story-title').focus();
+});
+renderStories();log('READY · browser-local teaching simulation; no Ghost server connected.');
+
+const qaGroups = [
+  {title:'01 / Functional testing',checks:[
+    {id:'flow',title:'Complete the publishing flow',detail:'Save a valid draft → verify it is not public → publish → verify it is public → return to draft.'},
+    {id:'validation',title:'Reject empty, short, and long inputs',detail:'Submit blank and whitespace titles, a short story, and paste long strings. Check field labels, limits, error messages, and focus.'},
+    {id:'failure',title:'Recover from a failed write',detail:'Enable the database outage; saving and publishing must fail without changing state. Restore it and retry. Test duplicate titles and fast repeat clicks.'},
+    {id:'storage',title:'Verify persistence and safe text rendering',detail:'Reload saved stories. Try HTML-like text: it must display literally. Reset the demo; check no stories remain.'}
+  ]},
+  {title:'02 / UI & responsive design',checks:[
+    {id:'desktop',title:'Inspect the desktop layout',detail:'Use a 1920 × 1080 viewport. Open every section, select every component, and check text, grids, and visible controls.'},
+    {id:'mobile',title:'Inspect tablet and mobile layouts',detail:'Repeat at 768 × 1024 and 390 × 844. Test the form, map, and evidence table; look for clipping and horizontal overflow.'}
+  ]},
+  {title:'03 / Browser & console health',checks:[
+    {id:'engines',title:'Repeat core flows in two engines',detail:'Use Chromium (Chrome or Edge) AND Firefox or Safari. Chrome plus Edge does not satisfy two engines. Record versions below.'},
+    {id:'console',title:'Inspect Console and Network',detail:'Open DevTools, clear logs, reload, and run core flows. Check zero uncaught errors and no broken local assets or 404 responses.'}
+  ]},
+  {title:'04 / Accessibility & performance',checks:[
+    {id:'keyboard',title:'Use the keyboard without a mouse',detail:'Test the skip link, navigation, node buttons, form, outage toggle, and checks with Tab, Enter, and Space. Verify visible focus and sensible error focus.'},
+    {id:'performance',title:'Inspect loading and interaction',detail:'Reload with cache disabled. Record the environment and timings; confirm the interface responds promptly. Observe the effect of reduced motion if enabled.'}
+  ]}
+];
+const allChecks=qaGroups.flatMap(group=>group.checks);
+let qa={version:1,checked:[],notes:''};
+try {
+  const data=JSON.parse(storageRead(QA_KEY)||'null');
+  if (data?.version===1 && Array.isArray(data.checked) && typeof data.notes==='string') qa={version:1,checked:[...new Set(data.checked.filter(id=>allChecks.some(c=>c.id===id)))],notes:data.notes.slice(0,5000)};
+} catch { /* A malformed manual notebook starts empty; nothing is marked passed. */ }
+function qaProgress() {$('#qa-count').textContent=String(qa.checked.length);$('#qa-total').textContent=String(allChecks.length);$('#qa-progress').max=allChecks.length;$('#qa-progress').value=qa.checked.length;}
+function saveQa() {storageWrite(QA_KEY,JSON.stringify(qa));qaProgress();}
+$('#qa-groups').replaceChildren(...qaGroups.map(group=>{
+  const div=element('div','panel qa-group');div.append(element('h2','',group.title));
+  group.checks.forEach(check=>{
+    const label=element('label','qa-check'), input=document.createElement('input'), text=element('span','',check.title);
+    input.type='checkbox';input.id=`qa-${check.id}`;input.checked=qa.checked.includes(check.id);
+    text.append(element('small','',check.detail));label.append(input,text);div.append(label);
+    input.addEventListener('change',()=>{qa.checked=input.checked ? [...new Set([...qa.checked,check.id])] : qa.checked.filter(id=>id!==check.id);saveQa();});
+  });return div;
+}));
+$('#qa-notes').value=qa.notes;
+$('#qa-notes').addEventListener('input',()=>{qa.notes=$('#qa-notes').value;saveQa();});
+$('#reset-qa').addEventListener('click',()=>{qa={version:1,checked:[],notes:''};$$('.qa-check input').forEach(input=>{input.checked=false;});$('#qa-notes').value='';saveQa();});
+$('#export-qa').addEventListener('click',()=>{
+  const report={project:'Ghost Architecture Lab',generatedAt:new Date().toISOString(),recordType:'User-entered manual observations; not an automated test result',browser:navigator.userAgent,viewport:{width:innerWidth,height:innerHeight},checks:allChecks.map(c=>({id:c.id,title:c.title,recordedComplete:qa.checked.includes(c.id)})),notes:qa.notes};
+  const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'}));
+  const link=element('a');link.href=url;link.download='ghost-lab-qa-notes.json';document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+qaProgress();
+</script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="brand" href="#architecture" aria-label="Ghost Architecture Lab home"><span class="brand-mark" aria-hidden="true">≡</span><span>ghost<span class="brand-sub">ARCHITECTURE LAB</span></span></a>
+      <div class="course-label">AD371 / FIELD STUDY 01</div>
+      <nav aria-label="Main navigation">
+        <a href="#architecture" data-route="architecture"><span aria-hidden="true">01</span> Architecture</a>
+        <a href="#publishing" data-route="publishing"><span aria-hidden="true">02</span> Publishing lab</a>
+        <a href="#audit" data-route="audit"><span aria-hidden="true">03</span> AI & evidence</a>
+        <a href="#qa" data-route="qa"><span aria-hidden="true">04</span> QA notebook</a>
+      </nav>
+      <div class="sidebar-note"><span class="small-dot"></span> Learn it. Trace it. Test it.<p>An architectural study of the open-source publishing platform.</p></div>
+      <div class="sidebar-bottom">Independent educational project<br><a href="https://github.com/TryGhost/Ghost" target="_blank" rel="noopener noreferrer">Explore Ghost source ↗</a></div>
+    </aside>
+    <div class="workspace">
+      <header class="topbar"><span>SOFTWARE ARCHITECTURE <span class="crumb">/</span> GHOST</span><span class="snapshot">SOURCE SNAPSHOT · 21 OCT 2026</span></header>
+      <main id="main" tabindex="-1">
+        <section id="architecture" class="page" aria-labelledby="architecture-title">
+          <div class="page-heading"><div><p class="eyebrow">01 / UNDER THE HOOD</p><h1 id="architecture-title">Inside a publishing system.</h1><p class="lede">One core. Clear boundaries. Follow a request through Ghost<br class="desktop-break"> and see how the pieces work together.</p></div><span class="study-stamp">G<span>OPEN SOURCE<br>CASE STUDY</span></span></div>
+          <div class="summary-strip"><div><span class="summary-label">ARCHITECTURAL STYLE</span><strong>Modular monolith <span class="subtle">+ decoupled clients</span></strong></div><div><span class="summary-label">CORE RUNTIME</span><strong>Node.js / Express</strong></div><div><span class="summary-label">PRODUCTION DATA</span><strong>MySQL</strong></div></div>
+          <div class="architecture-grid">
+            <div class="panel diagram-panel">
+              <div class="panel-heading"><div><h2>System map</h2><p>Select a component to inspect its boundary.</p></div><span class="label-pill">SIMPLIFIED MODEL</span></div>
+              <div class="diagram" aria-label="Ghost architecture. Browser communicates through Nginx with a single Ghost Core process. Core contains themes, APIs and services, and connects to MySQL.">
+                <div class="diagram-row clients"><button class="node" data-node="browser"><span class="node-icon" aria-hidden="true">▤</span><span><b>Reader / editor</b><small>Browser client</small></span></button><span class="optional-chip">Custom frontend → Content API</span></div>
+                <div class="connector"><span>HTTPS</span><i aria-hidden="true">↓</i></div>
+                <button class="node proxy" data-node="nginx"><span class="node-icon" aria-hidden="true">⇄</span><span><b>Nginx</b><small>Reverse proxy · recommended stack</small></span></button>
+                <div class="connector"><span>HTTP to Ghost</span><i aria-hidden="true">↓</i></div>
+                <div class="process-boundary"><div class="boundary-title"><span class="small-dot"></span> GHOST CORE <span>ONE NODE.JS PROCESS</span></div>
+                  <div class="core-nodes"><button class="node" data-node="themes"><span class="node-icon" aria-hidden="true">◫</span><span><b>Theme layer</b><small>Handlebars → HTML</small></span></button><button class="node" data-node="apis"><span class="node-icon" aria-hidden="true">{ }</span><span><b>JSON APIs</b><small>Content + Admin</small></span></button></div>
+                  <div class="internal-line">↓ <span>in-process calls</span> ↓</div>
+                  <button class="node services" data-node="services"><span class="node-icon" aria-hidden="true">⌘</span><span><b>Core services & models</b><small>Business logic · permissions · persistence</small></span></button>
+                </div>
+                <div class="connector database-link"><span>Database connection</span><i aria-hidden="true">↓</i></div>
+                <div class="diagram-row storage"><button class="node" data-node="mysql"><span class="node-icon" aria-hidden="true">▱</span><span><b>MySQL</b><small>Durable publication data</small></span></button><button class="node optional" data-node="integrations"><span class="node-icon" aria-hidden="true">↗</span><span><b>External services</b><small>Mail · storage adapters</small></span></button></div>
+                <p class="diagram-caption">External services connect to Core separately; the database arrow ends at MySQL. Optional Ghost 6 analytics and ActivityPub services are outside this focused map.</p>
+              </div>
+              <div class="legend"><span><i class="legend-box"></i> Process boundary</span><span><i class="legend-outline"></i> Optional integration</span><span>All diagram nodes are keyboard accessible</span></div>
+            </div>
+            <aside class="panel inspector" aria-labelledby="component-title"><p class="eyebrow">COMPONENT INSPECTOR</p><span id="component-category" class="label-pill green">APPLICATION</span><h2 id="component-title">Core services & models</h2><p id="component-description"></p><dl id="component-facts"></dl><a id="component-source" class="text-link" target="_blank" rel="noopener noreferrer">Read the source ↗</a><div class="insight"><span>THE ARCHITECTURE LESSON</span><p>Separate responsibilities do not automatically mean separate deployments.</p></div></aside>
+          </div>
+          <div class="panel trace-panel"><div class="trace-head"><div><p class="eyebrow">FOLLOW THE REQUEST</p><h2 id="flow-title">Read a story</h2></div><div class="segmented" aria-label="Request path"><button id="read-flow" aria-pressed="true">Read a story</button><button id="publish-flow" aria-pressed="false">Publish a post</button></div></div><ol id="trace-steps" class="trace-steps"></ol><p id="flow-note" class="muted"></p></div>
+          <p class="scope-note">“Modular monolith” is this study’s interpretation of the documented runtime boundary. Ghost describes its product as a decoupled, service-based application. <a href="https://github.com/TryGhost/Ghost/blob/main/docs/codebase/runtime-architecture.md" target="_blank" rel="noopener noreferrer">Runtime evidence ↗</a></p>
+        </section>
+        <section id="publishing" class="page" aria-labelledby="publishing-title" hidden>
+          <div class="page-heading"><div><p class="eyebrow">02 / LEARN BY DOING</p><h1 id="publishing-title">From draft to published.</h1><p class="lede">Exercise validation, state transitions, and a failed write.<br>Watch the editorial boundary become visible.</p></div><span class="label-pill green">INTERACTIVE PROTOTYPE</span></div>
+          <div class="notice"><b>Browser-local simulation.</b> No real Ghost server, login, API call, email, or MySQL connection. Stories stay in this browser when storage is available.</div>
+          <div id="storage-warning" class="notice warning" role="status" hidden></div>
+          <div class="lab-toolbar"><label class="switch-label"><input id="database-down" type="checkbox"><span class="toggle-track" aria-hidden="true"></span>Simulate database outage</label><span id="database-status" class="status-badge">Database simulation online</span><button id="reset-demo" class="button ghost">Reset demo</button></div>
+          <div class="lab-grid"><div class="panel compose"><div class="panel-heading"><div><h2>Compose a story</h2><p>A draft is private until you publish it.</p></div><span class="number-mark">01</span></div><form id="story-form" novalidate><div class="field"><label for="story-title">Story title</label><input id="story-title" name="title" maxlength="100" placeholder="A small idea, ready to share" aria-describedby="title-help title-error"><div class="field-meta"><span id="title-help">Required · 100 characters maximum</span><span id="title-count">0 / 100</span></div><p id="title-error" class="field-error"></p></div><div class="field"><label for="story-body">Story text</label><textarea id="story-body" name="body" rows="6" maxlength="1000" placeholder="Write at least 20 characters to explore the publishing flow…" aria-describedby="body-help body-error"></textarea><div class="field-meta"><span id="body-help">20–1,000 characters</span><span id="body-count">0 / 1000</span></div><p id="body-error" class="field-error"></p></div><button class="button primary" type="submit">Save draft <span aria-hidden="true">→</span></button></form><div id="lab-message" class="lab-message" role="status" aria-live="polite"></div><div class="mini-trace"><span>UI validation</span><i>→</i><span>Domain logic</span><i>→</i><span>Local state</span></div></div><div class="panel stories"><div class="panel-heading"><div><h2>Editorial workspace</h2><p><span id="draft-count">0</span> drafts · <span id="published-count">0</span> published</p></div><span class="number-mark">02</span></div><div id="story-list"></div></div></div>
+          <div class="reader-section"><div class="section-heading"><div><p class="eyebrow">THE READ BOUNDARY</p><h2>Public reading view</h2></div><span class="label-pill">PUBLISHED STORIES ONLY</span></div><div id="reader-list" class="reader-grid"></div></div>
+          <div class="panel activity"><h2>Request log <span class="subtle">/ this session</span></h2><p class="muted">Teaching events from the simulation; these are not network traces from Ghost.</p><ol id="activity-log"></ol></div>
+        </section>
+        <section id="audit" class="page" aria-labelledby="audit-title" hidden>
+          <div class="page-heading"><div><p class="eyebrow">03 / EVIDENCE OVER ASSUMPTIONS</p><h1 id="audit-title">Treat AI as a first draft.</h1><p class="lede">The model proposes a structure. Official documentation<br class="desktop-break"> and source code establish the boundaries.</p></div></div>
+          <div class="notice"><b>Audit scope:</b> a dated documentation/source snapshot, checked 21 October 2026. Links to upstream <code>main</code> can change. No Ghost installation or production load test was performed.</div>
+          <div class="audit-table-wrap panel"><table class="audit-table"><caption>Four architectural assumptions checked against evidence</caption><thead><tr><th scope="col">Assumption to check</th><th scope="col">Verified finding</th><th scope="col">Evidence</th></tr></thead><tbody>
+            <tr><td><span class="audit-num">01</span>Each box is a microservice.</td><td>Core’s API, frontend, and backend modules share one Node.js process. Admin executes in the browser. Logical modules and network services are different boundaries.</td><td><a href="https://github.com/TryGhost/Ghost/blob/main/docs/codebase/runtime-architecture.md" target="_blank" rel="noopener noreferrer">Runtime architecture ↗</a></td></tr>
+            <tr><td><span class="audit-num">02</span>Redis is mandatory.</td><td>Internal caches default to memory; Redis adapters are optional. MySQL is the durable database. HTTP caching is configured separately.</td><td><a href="https://docs.ghost.org/config/" target="_blank" rel="noopener noreferrer">Cache configuration ↗</a></td></tr>
+            <tr><td><span class="audit-num">03</span>Any SQL database is supported in production.</td><td>The production stack supports MySQL. SQLite is useful for local development; PostgreSQL is not a supported substitute.</td><td><a href="https://docs.ghost.org/hosting/" target="_blank" rel="noopener noreferrer">Supported stack ↗</a></td></tr>
+            <tr><td><span class="audit-num">04</span>SMTP also delivers native newsletters.</td><td>Transactional mail and bulk newsletters use different delivery paths. Native self-hosted bulk delivery uses Mailgun’s API.</td><td><a href="https://docs.ghost.org/newsletters/" target="_blank" rel="noopener noreferrer">Newsletter delivery ↗</a></td></tr>
+          </tbody></table></div>
+          <p class="scope-note">These are assumptions we tested, not invented examples of errors made during this chat. The prompt appendix records actual prompts and the initial scaffold.</p>
+          <div class="tradeoff-grid"><article class="panel tradeoff"><span class="eyebrow">TRADE-OFF / 01</span><h2>Simple deployment,<br>shared failure boundary.</h2><p>A single core process keeps calls local and deployment straightforward. Its modules also share runtime resources and availability. Splitting services adds operational and network costs.</p></article><article class="panel tradeoff"><span class="eyebrow">TRADE-OFF / 02</span><h2>Flexible frontends,<br>more client decisions.</h2><p>The Content API lets a custom frontend consume public content. That flexibility introduces decisions about rendering, caching, deployment, and keeping content fresh.</p></article></div>
+          <div class="panel disclosure"><h2>What AI contributed</h2><p>OpenAI Codex generated this explorer, the publishing prototype, tests, and documentation. A research subagent checked official sources. Customizations include an explicit process boundary, separate read/write paths, failure injection, defensive storage, accessible controls, and a QA evidence export.</p><p>The application does not put Admin API credentials in a browser. Its local storage is a teaching convenience and is not production access control.</p><a href="https://docs.ghost.org/admin-api/" class="text-link" target="_blank" rel="noopener noreferrer">Review Admin API authentication ↗</a></div>
+        </section>
+        <section id="qa" class="page" aria-labelledby="qa-title" hidden>
+          <div class="page-heading"><div><p class="eyebrow">04 / MAKE QUALITY OBSERVABLE</p><h1 id="qa-title">Test it. Keep the evidence.</h1><p class="lede">A repeatable walkthrough for the assignment’s four QA categories.<br>Mark a check only after you have demonstrated it.</p></div><button id="export-qa" class="button primary">Export QA notes ↓</button></div>
+          <div class="qa-progress"><span><b id="qa-count">0</b> of <b id="qa-total">0</b> checks recorded</span><progress id="qa-progress" value="0" max="10" aria-label="Checks recorded"></progress><button id="reset-qa" class="button ghost">Clear checks</button></div>
+          <div class="notice"><b>Your manual record.</b> Checking a box records your assertion; it does not execute a test. Automated results and observed browser checks are documented separately in <code>docs/QA_REPORT.md</code>.</div>
+          <div id="qa-groups" class="qa-groups"></div>
+          <div class="panel notes-panel"><h2><label for="qa-notes">Evidence & observations</label></h2><p class="muted" id="qa-notes-help">Record browser versions, viewport sizes, failures, and retests. Notes stay in this browser.</p><textarea id="qa-notes" rows="5" maxlength="5000" aria-describedby="qa-notes-help" placeholder="Example: Firefox [version], 390 × 844 — no horizontal overflow. Blank title focuses the title field…"></textarea></div>
+        </section>
+        <footer><span>GHOST ARCHITECTURE LAB</span><span>AD371 · Architectural analysis & quality assurance</span><a href="#audit">Sources & disclosure ↗</a></footer>
+      </main>
+    </div>
+  </div>
+  <noscript>This interactive explorer needs JavaScript. Architecture text remains available in the source and README.</noscript>
+</body>
+</html>
