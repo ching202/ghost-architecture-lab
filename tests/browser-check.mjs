@@ -9,14 +9,17 @@ import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url);
 const {chromium,firefox}=require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root=fileURLToPath(new URL('../',import.meta.url));
-const evidence=resolve(root,'docs/evidence');await mkdir(evidence,{recursive:true});
+const evidence=resolve(root,process.env.EVIDENCE_DIR || 'docs/evidence');await mkdir(evidence,{recursive:true});
 const base=process.env.BASE_URL || 'http://127.0.0.1:4173';
 const fixture=process.env.FIXTURE_MODE==='1';
+const requestedEngines=(process.env.BROWSER_ENGINES || 'chromium,firefox').split(',').map(value=>value.trim());
+if(requestedEngines.some(engine=>!['chromium','firefox'].includes(engine))) throw new Error('BROWSER_ENGINES must contain chromium and/or firefox.');
 const results=[];
 const body='A thoughtful story about architecture and careful engineering.';
 for(const [engine,type,executablePath] of [['chromium',chromium,process.env.CHROMIUM_PATH],['firefox',firefox,process.env.FIREFOX_PATH]]) {
+  if(!requestedEngines.includes(engine)) continue;
   let browser;
-  const result={engine,mode:fixture?'Exact static files via Playwright route fixture; not an HTTP hosting test':'HTTP server',checks:[],errors:[],consoleErrors:[],failedResponses:[],failedRequests:[],viewports:[]};
+  const result={engine,baseURL:base,platform:process.platform,mode:fixture?'Exact static files via Playwright route fixture; not an HTTP hosting test':'Live HTTP(S), no route fixture; isolated browser context',checks:[],errors:[],consoleErrors:[],consoleWarnings:[],failedResponses:[],failedRequests:[],assetResponses:[],viewports:[]};
   results.push(result);
   try {
     browser=await type.launch({headless:true,...(executablePath?{executablePath}:{}),...(engine==='firefox'?{firefoxUserPrefs:{'gfx.webrender.software':true,'layers.acceleration.disabled':true}}:{})});result.version=browser.version();
@@ -30,11 +33,12 @@ for(const [engine,type,executablePath] of [['chromium',chromium,process.env.CHRO
     });
     const page=await context.newPage();
     page.on('pageerror',e=>result.errors.push(e.message));
-    page.on('console',m=>{if(m.type()==='error')result.consoleErrors.push(m.text());});
-    page.on('response',r=>{if(r.status()>=400)result.failedResponses.push({url:r.url(),status:r.status()});});
+    page.on('console',m=>{if(m.type()==='error')result.consoleErrors.push(m.text());if(m.type()==='warning')result.consoleWarnings.push(m.text());});
+    page.on('response',r=>{if(r.status()>=400)result.failedResponses.push({url:r.url(),status:r.status()});if(r.url().startsWith(base)&&!result.assetResponses.some(item=>item.url===r.url()))result.assetResponses.push({url:r.url(),status:r.status()});});
     page.on('requestfailed',r=>result.failedRequests.push({url:r.url(),error:r.failure()?.errorText}));
     const check=async(name,fn)=>{await fn();result.checks.push({name,status:'pass'});console.log(`${engine}: PASS ${name}`);};
     await page.goto(base);await page.waitForFunction(()=>document.querySelector('#component-description').textContent.length>0);
+    result.initialNavigationTiming=await page.evaluate(()=>{const p=performance.getEntriesByType('navigation')[0];return{domContentLoadedMs:Math.round(p.domContentLoadedEventEnd-p.startTime),loadMs:Math.round(p.loadEventEnd-p.startTime),context:'First navigation in a fresh browser context; runner network, no throttling; not a benchmark'};});
     await check('all architecture components and request paths',async()=>{
       for(const button of await page.locator('[data-node]').all()){await button.click();assert.equal(await button.getAttribute('aria-pressed'),'true');}
       await page.locator('#publish-flow').click();assert.equal(await page.locator('#flow-title').innerText(),'Publish a post');
@@ -83,7 +87,7 @@ for(const [engine,type,executablePath] of [['chromium',chromium,process.env.CHRO
       for(const size of [{width:1920,height:1080},{width:768,height:1024},{width:390,height:844},{width:320,height:740}]){
         await page.setViewportSize(size);
         for(const route of ['architecture','publishing','audit','qa']){
-          await page.locator(`[data-route="${route}"]`).click();const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1);assert.equal(overflow,false,`${route} overflow at ${size.width}`);
+          await page.locator(`[data-route="${route}"]`).click();await page.locator(`#${route}`).waitFor({state:'visible'});const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1);assert.equal(overflow,false,`${route} overflow at ${size.width}`);
           if(size.width===390)await page.screenshot({path:resolve(evidence,`${engine}-mobile-${route}.png`),fullPage:true});
         }
         result.viewports.push({...size,horizontalOverflow:false});
@@ -109,6 +113,8 @@ for(const [engine,type,executablePath] of [['chromium',chromium,process.env.CHRO
   }catch(e){result.status='failed';result.failure=e.message.split('\n')[0];if(/exitCode=3221225477/.test(e.message))result.environmentNote='Firefox process exited with Windows access violation 3221225477 before page navigation.';console.error(`${engine}: ${e.stack}`);}
   finally{if(browser)await browser.close();}
 }
-await writeFile(resolve(evidence,'browser-results.json'),JSON.stringify({runAt:new Date().toISOString(),results},null,2));
+const report={runAt:new Date().toISOString(),baseURL:base,testSourceCommit:process.env.GITHUB_SHA || null,workflowRun:process.env.GITHUB_RUN_ID?`https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`:null,results};
+await writeFile(resolve(evidence,'browser-results.json'),JSON.stringify(report,null,2));
+if(process.env.GITHUB_STEP_SUMMARY) await writeFile(process.env.GITHUB_STEP_SUMMARY,[`# Live browser QA`, `URL: ${base}`, ``, '| Engine | Version | Result | Passed groups | Page errors | Console errors | HTTP errors | Failed requests |', '| --- | --- | --- | --- | --- | --- | --- | --- |',...results.map(r=>`| ${r.engine} | ${r.version || 'not launched'} | ${r.status} | ${r.checks.length} | ${r.errors.length} | ${r.consoleErrors.length} | ${r.failedResponses.length} | ${r.failedRequests.length} |`), '', 'Screenshots and complete JSON are in the browser-qa-evidence artifact.', ...results.filter(r=>r.failure).map(r=>`${r.engine}: ${r.failure}`)].join('\n'));
 console.log(JSON.stringify(results.map(({engine,version,status,checks,failure})=>({engine,version,status,passedChecks:checks.length,failure})),null,2));
 if(results.some(r=>r.status!=='passed'))process.exitCode=1;
