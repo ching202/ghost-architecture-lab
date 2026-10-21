@@ -107,7 +107,7 @@ Source analysis is dated October 21, 2026. Upstream `main` is mutable and may in
 node --test tests/core.test.mjs
 ```
 
-The domain suite covers state transitions, validation, failure invariants, slug uniqueness, collection bounds, and storage recovery. Recorded results: **12 domain tests, 15 Chrome browser check groups, and 6 standalone-preview smoke checks passed**. Firefox could not launch in the execution environment, so the second-engine requirement remains pending. See [QA_REPORT.md](docs/QA_REPORT.md) for results and limits, [QA_CHECKLIST.md](docs/QA_CHECKLIST.md) for manual recording steps, and `docs/evidence/` for browser results and screenshots. Do not mark a manual check complete solely because a checkbox exists in the app.
+The domain suite covers state transitions, validation, failure invariants, slug uniqueness, collection bounds, and storage recovery. Earlier results: **12 domain tests, 15 Chrome fixture check groups, and 6 standalone-preview smoke checks passed**. The live deployment subsequently passed **15/15 check groups in Chromium 151.0.7922.34 and 15/15 in Firefox 153.0** on Ubuntu 24.04, with zero page errors, console errors/warnings, HTTP error responses, or failed requests. [Successful run](https://github.com/ching202/ghost-architecture-lab/actions/runs/39690676950). The earlier Windows Firefox launch failure is preserved as environment history. See [QA_REPORT.md](docs/QA_REPORT.md) for results and limits, [QA_CHECKLIST.md](docs/QA_CHECKLIST.md) for manual recording steps, and `docs/evidence/` for evidence. Do not mark a manual check complete solely because a checkbox exists in the app.
 
 Optional browser suite, in a second terminal while the server runs:
 
@@ -117,7 +117,7 @@ npx playwright install chromium firefox
 node tests/browser-check.mjs
 ```
 
-`BASE_URL` selects another origin. `CHROMIUM_PATH` and `FIREFOX_PATH` can select local executables. `PLAYWRIGHT_MODULE` can point to an already-installed package. `FIXTURE_MODE=1` serves the exact static bytes through Playwright request routing for restricted environments; this is a rendering/interaction test, not a hosting test. The suite reports a failure if either requested browser cannot complete. The supported browser check must be repeated on the final deployment before recording.
+`BASE_URL` selects another origin. `BROWSER_ENGINES=firefox` selects Firefox alone; the default is both engines. `EVIDENCE_DIR` chooses a fresh results directory relative to the project. `CHROMIUM_PATH` and `FIREFOX_PATH` can select local executables. `PLAYWRIGHT_MODULE` can point to an already-installed package. `FIXTURE_MODE=1` serves the exact static bytes through Playwright request routing for restricted environments; this is a rendering/interaction test, not a hosting test. The suite reports a failure if either requested browser cannot complete. The **Verify live browser behavior** GitHub Actions workflow repeats the full live-site run and saves an evidence artifact. Record your own DevTools walkthrough before submitting the video.
 
 ## Publish to a public GitHub repository and Pages
 
@@ -140,4 +140,4 @@ The first Pages workflow completed successfully on October 21, 2026. A live-brow
 
 ## Submission and video
 
-Use [VIDEO_OUTLINE.md](docs/VIDEO_OUTLINE.md) for a 6 minute 30 second presentation, with your screen and webcam visible throughout. [SUBMISSION.md](docs/SUBMISSION.md) contains the LMS text template and remaining tasks. The video recording and student review must be completed by the student/account owner. Consult the deployment record for verified links and the QA report for remaining browser checks.
+Use [VIDEO_SCRIPT_SHORT.txt](docs/VIDEO_SCRIPT_SHORT.txt) for about 400 spoken words with exact clicks and a 6:25 target, allowing a slower pace and pauses. [VIDEO_OUTLINE.md](docs/VIDEO_OUTLINE.md) retains the fuller outline. Keep your screen and webcam visible throughout. [SUBMISSION.md](docs/SUBMISSION.md) contains the LMS text template and remaining tasks. The video recording and student review must be completed by the student/account owner. Consult the deployment record for verified links and the QA report for actual results and limits.
