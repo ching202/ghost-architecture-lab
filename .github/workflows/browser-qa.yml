@@ -1,0 +1,41 @@
+name: Verify live browser behavior
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/browser-qa.yml'
+      - 'tests/browser-check.mjs'
+permissions:
+  contents: read
+jobs:
+  browser-qa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install pinned browser test dependency
+        run: npm install --no-save --package-lock=false playwright@1.62.1
+      - name: Install browser engines and system dependencies
+        run: npx playwright install --with-deps chromium firefox
+      - name: Verify deployed site in Chromium and Firefox
+        env:
+          BASE_URL: https://ching202.github.io/ghost-architecture-lab/
+          BROWSER_ENGINES: chromium,firefox
+          EVIDENCE_DIR: docs/evidence/live-browser-run
+          FIXTURE_MODE: '0'
+        run: node tests/browser-check.mjs
+      - name: Save actual results and screenshots
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: browser-qa-evidence
+          path: docs/evidence/live-browser-run
+          retention-days: 30
+          if-no-files-found: warn
