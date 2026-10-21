@@ -1,0 +1,15 @@
+{
+  "runAt": "2026-10-21T22:39:27.424Z",
+  "browser": "156.0.8078.47",
+  "mode": "Standalone preview.html opened directly by file URL",
+  "status": "passed",
+  "checks": [
+    "architecture initialized from file URL",
+    "draft saved and hidden",
+    "publication visible",
+    "local file storage restored",
+    "reset cleared stories",
+    "no uncaught JavaScript errors"
+  ],
+  "errors": []
+}

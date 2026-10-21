@@ -1,0 +1,117 @@
+{
+  "runAt": "2026-10-21T22:35:38.273Z",
+  "results": [
+    {
+      "engine": "chromium",
+      "mode": "Exact static files via Playwright route fixture; not an HTTP hosting test",
+      "checks": [
+        {
+          "name": "all architecture components and request paths",
+          "status": "pass"
+        },
+        {
+          "name": "empty input focuses title and reports both errors",
+          "status": "pass"
+        },
+        {
+          "name": "whitespace and short story rejected",
+          "status": "pass"
+        },
+        {
+          "name": "input length limits",
+          "status": "pass"
+        },
+        {
+          "name": "outage rejects create and preserves input",
+          "status": "pass"
+        },
+        {
+          "name": "draft stays out of public view and duplicate slug is unique",
+          "status": "pass"
+        },
+        {
+          "name": "outage rejects publish; recover, publish, unpublish",
+          "status": "pass"
+        },
+        {
+          "name": "HTML-like input renders safely and persists across reload",
+          "status": "pass"
+        },
+        {
+          "name": "rapid repeat saves do not create extra valid drafts",
+          "status": "pass"
+        },
+        {
+          "name": "QA checkbox, notes, download, and persistence",
+          "status": "pass"
+        },
+        {
+          "name": "responsive routes and no horizontal overflow",
+          "status": "pass"
+        },
+        {
+          "name": "skip link and keyboard navigation",
+          "status": "pass"
+        },
+        {
+          "name": "corrupted saved data recovers visibly",
+          "status": "pass"
+        },
+        {
+          "name": "blocked storage allows memory-only flow with visible warning",
+          "status": "pass"
+        },
+        {
+          "name": "clean runtime console and local asset responses",
+          "status": "pass"
+        }
+      ],
+      "errors": [],
+      "consoleErrors": [],
+      "failedResponses": [],
+      "failedRequests": [],
+      "viewports": [
+        {
+          "width": 1920,
+          "height": 1080,
+          "horizontalOverflow": false
+        },
+        {
+          "width": 768,
+          "height": 1024,
+          "horizontalOverflow": false
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "horizontalOverflow": false
+        },
+        {
+          "width": 320,
+          "height": 740,
+          "horizontalOverflow": false
+        }
+      ],
+      "version": "156.0.8078.47",
+      "navigationTiming": {
+        "domContentLoadedMs": 31,
+        "loadMs": 33,
+        "resourceCount": 4
+      },
+      "status": "passed"
+    },
+    {
+      "engine": "firefox",
+      "mode": "Exact static files via Playwright route fixture; not an HTTP hosting test",
+      "checks": [],
+      "errors": [],
+      "consoleErrors": [],
+      "failedResponses": [],
+      "failedRequests": [],
+      "viewports": [],
+      "status": "failed",
+      "failure": "browserType.launch: Failed to launch the browser process.",
+      "environmentNote": "Firefox process exited with Windows access violation 3221225477 before page navigation."
+    }
+  ]
+}
