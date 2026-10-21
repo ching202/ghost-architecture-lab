@@ -4,7 +4,9 @@ An AD371 companion application for **Architectural Analysis, AI-Assisted Prototy
 
 The project studies [Ghost](https://github.com/TryGhost/Ghost), an open-source publishing platform, and turns the analysis into an interactive architecture explorer and publishing proof of concept. It was created with OpenAI Codex on October 21, 2026.
 
-Public repository: [ching202/ghost-architecture-lab](https://github.com/ching202/ghost-architecture-lab). Deployment details and verification are recorded in [DEPLOYMENT.md](docs/DEPLOYMENT.md).
+**Live website:** [Ghost Architecture Lab](https://ching202.github.io/ghost-architecture-lab/)
+
+**Public repository:** [ching202/ghost-architecture-lab](https://github.com/ching202/ghost-architecture-lab). Deployment details and verification are recorded in [DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ## What you can do
 
@@ -23,7 +25,7 @@ For an immediate offline demonstration, open **[preview.html](preview.html)** in
 
 Requires Node.js 22 or newer. The delivered project was tested with Node.js 24.19.0. This is the prototype's requirement, not a Ghost installation recommendation.
 
-After creating your public repository, clone its actual URL:
+Clone the public repository:
 
 ```sh
 git clone https://github.com/ching202/ghost-architecture-lab.git
@@ -89,7 +91,7 @@ These choices are specific to this teaching app. They do not represent Ghost's a
 
 ## AI disclosure and verification
 
-**Tool:** OpenAI Codex desktop coding assistant, with a research subagent using the same assistant service. Sites was used for deployment; Playwright and Node's built-in test runner were used for QA. No other LLM provider was used. The exact backend model revision is not exposed in the project artifacts.
+**Tool:** OpenAI Codex desktop coding assistant, with a research subagent using the same assistant service. GitHub Pages hosts the app; an earlier Sites deployment attempt did not complete. Playwright, the in-app browser, and Node's built-in test runner were used for QA. No other LLM provider was used. The exact backend model revision is not exposed in the project artifacts.
 
 The user supplied the assignment and selected the full project option. Codex selected Ghost and generated the application, tests, and documents. This is disclosed AI-assisted work; the student must review the findings, rehearse the demonstration, and describe their own engineering understanding.
 
@@ -134,7 +136,7 @@ If the folder is already a Git repository, inspect `git remote -v`; the Sites so
 
 In the GitHub repository's **Settings → Pages**, choose **GitHub Actions**. Run the included **Publish architecture lab** workflow if needed. It tests the domain functions and publishes only `dist/`. The workflow follows GitHub's [official static Pages example](https://github.com/actions/starter-workflows/blob/main/pages/static.yml). Use the actual URL returned by the successful workflow; do not submit a guessed URL.
 
-An earlier attempt to use Sites hosting was blocked before publication. This repository instead targets GitHub Pages; see [DEPLOYMENT.md](docs/DEPLOYMENT.md) for current status.
+The first Pages workflow completed successfully on October 21, 2026. A live-browser smoke check verified component selection, request traces, validation, draft creation, failed-write recovery, publication, reload persistence, unpublication, and reset. No warning/error console entries were captured during that check. See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for the verified URL and remaining QA limits.
 
 ## Submission and video
 
