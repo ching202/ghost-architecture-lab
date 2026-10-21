@@ -72,6 +72,20 @@ The user subsequently requested (exact text):
 
 Codex used the signed-in GitHub website to publish the source and configure GitHub Pages. This is an assistant contribution; see the deployment record for verified results.
 
+The user requested a recording script (exact text):
+
+> Write me a 5–7 minute video script and tell me exactly what to click and show on screen while I explain the project.
+
+The user then requested (exact text):
+
+> Help me run the Firefox checks and update the QA report with the actual results before I record the video.
+
+And clarified (exact text):
+
+> I talk slow as well so you can make it shorter
+
+Codex repeated the Windows launch probe, preserved its pre-navigation failure, and added a reproducible GitHub Actions workflow using Ubuntu 24.04. The live deployment passed all 15 check groups in Firefox 153.0 and Chromium 151.0.7922.34. The machine-generated evidence was downloaded, its archive digest verified, and Firefox screenshots inspected. Only the test harness, workflow, and documentation changed; no application fix was needed for this run. The report distinguishes this headless Linux test from a student-operated Windows browser. A shorter video script provides about 400 spoken words plus timed screen actions. See [QA_REPORT.md](QA_REPORT.md) and [VIDEO_SCRIPT_SHORT.txt](VIDEO_SCRIPT_SHORT.txt).
+
 Before submission, replace these placeholders with your actual activity:
 
 - Sources I personally inspected: **[complete after review]**

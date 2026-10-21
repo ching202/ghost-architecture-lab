@@ -1,12 +1,14 @@
 # Video outline — target 6:30
 
+**For a slower speaking pace, use [VIDEO_SCRIPT_SHORT.txt](VIDEO_SCRIPT_SHORT.txt): about 400 spoken words with exact clicks and a 6:25 target.** The fuller outline below is optional. The completed Linux Firefox/Chromium results are in [QA_REPORT.md](QA_REPORT.md); show that evidence without describing it as a local manual run.
+
 Record your **screen and live webcam/face throughout**. Use these as speaking cues, not a script to read verbatim. Keep the camera away from the inspector, form controls, and DevTools. This file is a plan; no video or webcam recording has been generated.
 
 ## Before recording
 
 - Review the sources and be ready to explain the difference between logical modules and deployed services in your own words.
 - Use the final instructor-accessible deployment; open the public GitHub README in another tab.
-- Complete Firefox/Safari testing and update `QA_REPORT.md` with genuine results. Keep both engines ready for the recording.
+- Review the completed Chromium/Firefox live-site evidence in `QA_REPORT.md`. A local second-engine demonstration is optional additional evidence; do not claim the Linux run happened in your local Windows browser.
 - Reset the demo and QA notebook. Prepare DevTools and responsive presets (1920 × 1080, 768 × 1024, 390 × 844).
 - Put your webcam on screen; test mic level, screen readability, and a short sample recording. Keep personal notifications out of frame.
 - Rehearse once with a timer. Aim for 6:30, leaving 30 seconds before the upper limit.
@@ -66,7 +68,7 @@ Use the DevTools device toolbar, visibly switching desktop → tablet → 390 px
 
 **5:00–5:30 · Console, assets, and second engine.**
 
-Open Console, clear it, reload, and perform a core action. Show no uncaught errors. Show successful app requests in Network. Switch to Firefox or Safari and repeat a quick draft/publish action; identify the browser/version. This step must be completed personally because the generated environment could not launch Firefox.
+Open Console, clear it before testing, reload, and perform a core action. Show the actual result and successful app requests in Network. Show the completed Linux Firefox/Chromium workflow and its recorded versions. If you also demonstrate Firefox locally, identify its actual version and distinguish that manual check from the automated run.
 
 **5:30–6:00 · Accessibility and performance.**
 

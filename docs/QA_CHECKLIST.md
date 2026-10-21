@@ -20,9 +20,9 @@ Record: tester, date, URL/version, browser and version, viewport, expected/actua
 | R01 | Desktop | Test every section at 1920 × 1080. | No overlap, clipping, or horizontal overflow. | Pending personal check |
 | R02 | Tablet | Repeat at 768 × 1024. | Map, inspector, form, and table fit. | Pending personal check |
 | R03 | Mobile | Repeat at 390 × 844 and optionally 320 × 740. Include long story content. | Controls remain usable and text wraps. | Pending personal check |
-| B01 | Cross-browser | Repeat F02–F09 in Chrome/Edge and Firefox/Safari. | Core behavior works in two different engines. Chrome plus Edge is not sufficient. | **Firefox/Safari still required** |
-| B02 | Console | Clear DevTools Console; reload and repeat the core flow. | Zero uncaught JS errors. | Pending on final URL |
-| B03 | Assets | Clear Network; disable cache; reload; filter errors. | App HTML, CSS, JS, and favicon load; no broken local asset 404s. | Pending on final URL |
+| B01 | Cross-browser | Repeat F02–F09 in Chrome/Edge and Firefox/Safari. | Core behavior works in two different engines. Chrome plus Edge is not sufficient. | **Automated live checks passed in Chromium 151 and Firefox 153; see QA_REPORT.md.** |
+| B02 | Console | Clear DevTools Console; reload and repeat the core flow. | Zero uncaught JS errors. | Automated live checks: zero in both engines. Show DevTools personally in the video. |
+| B03 | Assets | Clear Network; disable cache; reload; filter errors. | App HTML, CSS, JS, and favicon load; no broken local asset 404s. | Automated live checks: no HTTP errors or failed requests. Firefox observed all five assets, including favicon, at HTTP 200. Show Network personally in the video. |
 | A01 | Labels/focus | Tab from top; activate skip link from both architecture and publishing sections. | Focus is visible; skip reaches main without switching sections. | Pending personal check |
 | A02 | Keyboard | Navigate, inspect nodes, submit form, toggle outage, and check QA items using keyboard. | Enter/Space work; invalid title gets focus; no trap. | Pending personal check |
 | A03 | Readability | Inspect at 200% zoom and with a screen reader if available. | Content remains usable; labels and errors are announced sensibly. | Not fully audited |

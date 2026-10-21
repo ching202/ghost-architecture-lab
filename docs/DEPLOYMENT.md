@@ -20,6 +20,6 @@ This is a static educational simulation: publishing a story changes only that br
 
 ## Remaining student checks
 
-Repeat the core flow in Firefox or Safari, inspect Network in DevTools, and check all submission links in a signed-out/incognito window. A complete second-engine test and signed-out/instructor-account access check are not claimed here. The browser session used for repository creation was signed into GitHub, although the repository's Public badge and Pages publication were verified. See [QA_REPORT.md](QA_REPORT.md) for test limitations.
+Chromium and Firefox subsequently passed the full 15-group browser suite against this URL in fresh unauthenticated contexts on Ubuntu 24.04. See [QA_REPORT.md](QA_REPORT.md) and the [successful workflow](https://github.com/ching202/ghost-architecture-lab/actions/runs/39690676950). The student should still show Console/Network live in the recording and check the repository/video links for instructor access. The automated Firefox result is from Linux, not a local Windows manual test.
 
 An earlier Sites hosting attempt did not complete. GitHub Pages is the active deployment; no Sites URL is needed for submission.

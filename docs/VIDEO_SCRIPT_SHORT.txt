@@ -1,0 +1,86 @@
+GHOST ARCHITECTURE LAB — SHORT VIDEO SCRIPT
+388 spoken words. Target 6:00–6:25 with slow speech, clicks, and pauses.
+Keep your screen AND webcam visible throughout. Read only SAY text aloud.
+Use the timestamps as pacing cues. Stay above 5:00 and below 7:00; rehearse once.
+
+OPEN BEFORE RECORDING
+Live app: https://ching202.github.io/ghost-architecture-lab/
+README: https://github.com/ching202/ghost-architecture-lab#readme
+AI prompts: https://github.com/ching202/ghost-architecture-lab/blob/main/docs/AI_PROMPTS.md
+QA report: https://github.com/ching202/ghost-architecture-lab/blob/main/docs/QA_REPORT.md
+Actual passing workflow: https://github.com/ching202/ghost-architecture-lab/actions/runs/39690676950
+
+PREPARE
+Use desktop Chrome or Edge for the live DevTools segment.
+In the app, Publishing lab > Reset demo clears this app's stories; keep copies of any you want first.
+QA notebook > Clear checks resets the notebook. Start recording on Architecture.
+Read the architecture evidence first so you can paraphrase naturally.
+The automated Firefox run happened on Ubuntu 24.04. Do not describe it as your local Windows Firefox session.
+You may show the report and workflow as second-engine evidence; keep the form, responsive, Console, Network, and keyboard demonstrations live.
+Say only what you actually observe. Do not narrate a pass if the live test fails.
+Keep the webcam away from buttons, inspector text, and DevTools.
+
+PASTE TEXT
+Title: Architecture demo
+Story: A draft stays private until publication succeeds. This example tests validation, state changes, and recovery.
+Long title (150 characters):
+123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+
+0:00–0:25 | Introduction
+CLICK / SHOW: Show the live Architecture page and URL.
+SAY: "Hi, I’m Ching. This is Ghost Architecture Lab, my AD371 project. It explains Ghost’s architecture and includes a working publishing simulation. The source is public on GitHub, and the app runs on GitHub Pages."
+
+0:25–1:20 | Architecture
+CLICK / SHOW: Scroll to System map. Click Core services & models, MySQL, then JSON APIs. Scroll to FOLLOW THE REQUEST and click Read a story, then Publish a post.
+SAY: "Ghost’s main runtime can be described as a modular monolith with decoupled clients. The browser and Nginx are outside Core. Themes, APIs, services, and models share one Node.js process. MySQL stores durable data separately. The Content API reads published content; the Admin API manages content. These paths show reading and publishing. A shared core simplifies communication, but its modules also share resources and failures."
+
+1:20–2:00 | AI verification
+CLICK / SHOW: Click AI & evidence. Point to rows 01 and 02. Show the prepared AI_PROMPTS.md tab and its implementation corrections.
+SAY: "Codex generated the scaffold, tests, and documentation. The audit checked assumptions against official sources. Separate modules are not automatically microservices, and Redis is not mandatory. Actual QA fixes included a blocked toggle click and mobile navigation overflow. The prompt appendix documents the AI contribution and changes."
+
+2:00–3:00 | Publishing flow
+CLICK / SHOW: Click Publishing lab. Enter the prepared title and story. Click Save draft; show the empty Public reading view. Click Publish story →; show the published story. Click Return to draft; show that the reading view is empty again.
+SAY: "This is a browser-local simulation, not a real Ghost server. I’ll save a draft. It appears in the editorial workspace but stays out of the reading view. Publishing makes it visible there. Returning it to draft hides it again. This demonstrates a state transition, not real authentication."
+
+3:00–4:00 | Failure and recovery
+CLICK / SHOW: Turn Simulate database outage on. Click Publish story →; show the error and unchanged draft. Turn outage off and publish again. Press Ctrl+R to show persistence. Open QA notebook, check Complete the publishing flow, then return to Publishing lab.
+SAY: "With the simulated database unavailable, publication fails and the draft stays unchanged. Restoring it lets the same action succeed. Reloading shows that browser storage preserves the story. The QA notebook records observations; checking a box does not run a test."
+
+4:00–4:30 | Validation
+CLICK / SHOW: With the form empty, click Save draft. Show the messages and focused title. Paste the prepared 150-character title; point to 100 / 100. Leave it unsaved.
+SAY: "A blank submission produces clear errors and focuses the title. The title also stops at one hundred characters. Invalid input does not create another story."
+
+4:30–5:00 | Responsive design
+CLICK / SHOW: Open DevTools with Ctrl+Shift+I. Click Toggle device toolbar, select Responsive, and show 1920 × 1080, 768 × 1024, then 390 × 844. Scroll the form at mobile size. Use Fit to window if needed.
+SAY: "Here are desktop, tablet, and mobile layouts. I’m checking that text wraps, controls remain usable, and nothing overlaps or overflows. This is viewport emulation, not a physical-device performance test."
+
+5:00–5:30 | Console and network
+CLICK / SHOW: Turn device mode off. Open Console, clear BEFORE testing, keep errors visible, and reload. Open Network, select All, clear filters, enable Disable cache, choose No throttling, and reload. Show status codes and read the actual Load value.
+SAY: "I’m checking the console for uncaught errors and Network for broken assets. With cache disabled, this load took [read actual value]. That is one observation on this connection, not a general benchmark."
+
+5:30–6:00 | Firefox evidence and keyboard
+CLICK / SHOW: Show the verified live-browser results table in QA_REPORT.md and its workflow link. Return to Publishing lab. Click Story title; press Tab to Story text, then Tab to Save draft; pause on visible focus and press Enter.
+SAY: "Firefox and Chromium each passed all fifteen live-site test groups on Linux. These automated results are separate from this recording. Here, Tab moves through labeled controls, and Enter activates the button. This checks basic keyboard behavior, not complete accessibility."
+
+6:00–6:25 | Conclusion
+CLICK / SHOW: Show README setup instructions and AI disclosure. End on the live Architecture page.
+SAY: "My main lesson is that architecture needs clear boundaries, and AI output needs verification. The repository includes setup instructions, prompts, and test evidence. The live site makes the prototype available for review."
+
+PAUSE RULE
+At a slow pace, speak one sentence, perform the click, then let the outcome remain visible for two seconds.
+Use the extra time in the 2:00–4:00 segment to show each state clearly; do not add more narration.
+At 6:00, move to the conclusion. Do not skip the live QA demonstration to save time.
+
+DEVTOOLS HELP (not spoken)
+Open: Ctrl+Shift+I. If Console or Network is hidden, use the >> tab menu.
+Device mode: phone/tablet icon > Responsive > width and height fields.
+Network: select All, remove filters, keep error messages visible, and read the actual Load value.
+https://developer.chrome.com/docs/devtools/device-mode
+https://developer.chrome.com/docs/devtools/network/reference/
+
+VERIFIED RESULT TO SAY
+"Firefox and Chromium each passed all fifteen live-site test groups on Linux."
+Firefox 153.0; Chromium 151.0.7922.34; Playwright 1.62.1; Ubuntu 24.04.
+Both: zero page errors, console errors/warnings, HTTP errors, or failed requests.
+The earlier Windows launch failure is preserved in the report and is not relabeled as a local pass.
+
